@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - 스터디 메이트</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+
+    <div class="center-layout">
+        <div class="login-card">
+            <a href="index.html" class="logo" style="display:block; margin-bottom: 20px;">STUDY MATE</a>
+            
+            <h2 style="border: none; padding: 0; font-size: 22px;">회원가입</h2>
+            
+            <form action="login.html">
+                <div class="input-group" style="text-align: left;">
+                    <label>이메일</label>
+                    <input type="email" placeholder="example@email.com" required>
+                </div>
+
+                <div class="input-group" style="text-align: left;">
+                    <label>비밀번호</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" placeholder="비밀번호 입력" required style="padding-right: 40px;">
+                        
+                        <svg id="eyeIcon" class="toggle-eye" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="input-group" style="text-align: left;">
+                    <label>비밀번호 확인</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password-confirm" placeholder="비밀번호 다시 입력" required style="padding-right: 40px;">
+                        
+                        <svg id="eyeIcon-confirm" class="toggle-eye" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="input-group" style="text-align: left;">
+                    <label>닉네임</label>
+                    <input type="text" placeholder="활동할 닉네임" required>
+                </div>
+
+                <button type="submit" class="primary-btn">가입완료</button>
+            </form>
+
+            <div style="margin-top: 20px; font-size: 13px;">
+                <p>이미 계정이 있으신가요? <a href="login.html" style="color: #007bff; font-weight: bold;">로그인</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. 첫 번째 비밀번호 눈 작동
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        eyeIcon.addEventListener('click', function() {
+            const currentType = passwordInput.getAttribute('type');
+            if (currentType === 'password') {
+                passwordInput.setAttribute('type', 'text');
+                eyeIcon.style.color = '#333'; 
+                eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+            } else {
+                passwordInput.setAttribute('type', 'password');
+                eyeIcon.style.color = '#888'; 
+                eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            }
+        });
+
+        // 2. 두 번째 비밀번호 확인 눈 작동
+        const passwordConfirmInput = document.getElementById('password-confirm');
+        const eyeIconConfirm = document.getElementById('eyeIcon-confirm');
+
+        eyeIconConfirm.addEventListener('click', function() {
+            const currentType = passwordConfirmInput.getAttribute('type');
+            if (currentType === 'password') {
+                passwordConfirmInput.setAttribute('type', 'text');
+                eyeIconConfirm.style.color = '#333'; 
+                eyeIconConfirm.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+            } else {
+                passwordConfirmInput.setAttribute('type', 'password');
+                eyeIconConfirm.style.color = '#888'; 
+                eyeIconConfirm.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            }
+        });
+    </script>
+
+</body>
+</html>

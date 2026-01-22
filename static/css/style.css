@@ -1,0 +1,343 @@
+/* 1. 기본 설정 */
+body {
+    font-family: 'Noto Sans KR', sans-serif; /* 폰트 설정 */
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f9f9f9;
+}
+
+/* 링크 기본 스타일 : 밑줄 없애고 회색 */
+a {
+    text-decoration: none;
+    color:inherit;
+}
+
+/*2. 네비게이션 바*/
+header {
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: sticky; /* 스크롤 내려도 상단에 고정하는 것 */
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-container {
+    max-width: 1100px; /* 전체 너비 제한 */
+    margin: 0 auto; /* 가운데 정렬 */
+    padding: 0 20px;
+    height: 60px;
+    display: flex;
+    justify-content: space-between; /* 양 끝 정렬 */
+    align-items: center;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.nav-menu a {
+    color: #555;
+    margin-left: 20px;
+    font-size: 15px;
+    transition: color 0.3s;
+}
+
+.nav-menu a:hover {
+    color: #007bff; /*마우스 올리면 파란색 */
+    font-weight: bold;
+}
+
+/* 3. 레이아웃 */
+main {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+section {
+    margin-bottom: 60px;
+}
+
+h2 {
+    border-left: 5px solid #007bff;
+    padding-left: 15px;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* 4. 카드 디자인 */
+.study-list {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap; /* 공간 부족하면 줄 바꿈 */
+}
+
+.card {
+    flex: 1; /* 공간 균등 분배 */
+    min-width: 280px; /* 너무 작아지지 않게 */
+    background: white;
+    border: 1px solid #eee;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px); /* 둥실 떠오르는 효과 */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card h3 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.tag {
+    display: inline-block;
+    background: #eef4ff;
+    color:#007bff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-right: 5px;
+}
+
+/* 5. 폼 & 입력창 */
+form {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #555;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+    font-size: 14px;
+    font-family : 'Noto Sans KR', sans-serif; /*폰트동일 */
+}
+
+textarea {
+    resize: none; /*늘리기 못함*/
+    min-height: 200px; /*기본 높이 설정*/
+    overflow-y: auto; /*글자 높이를 넘어가면 자동으로 세로 스크롤바*/
+}
+
+/* 기본 버튼(파랑) */
+.primary-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.primary-btn:hover {
+    background-color: #0056d3;
+}
+
+/* 6. 로그인 페이지 전용 스타일 */
+/* 화면 중앙 정렬을 위한 클래스 */
+.center-layout {
+    height: 90vh; /* 화면의 높이 90% */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-card {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 360px;
+    text-align: center;
+}
+
+/* 비밀번호 가리기 */
+.password-wrapper {
+    position: relative;
+}
+
+/* 눈 아이콘 */
+.toggle-eye {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #888;
+    width: 20px;
+}
+
+/* 구분선 */
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    color: #888;
+    font-size: 13px;
+}
+.divider::before, .divider::after {
+    content: ''; flex: 1; height: 1px; background: #ddd;
+}
+.divider span { padding: 0 10px; }
+
+/* 소셜 로그인 버튼 스타일 */
+.social-btn {
+    width: 100%;
+    height: 48px;  /* 높이 고정 */
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 12px; /* 버튼 사이 간격 */
+    cursor: pointer;
+    
+    /* 아이콘과 글자를 정중앙에 배치 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px; /* 아이콘과 글자 사이 간격 8px */
+    
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+/* 네이버, 구글 색상 */
+.naver {
+    background-color: #03C75A;
+    color: white;
+}
+.naver:hover {
+    background-color: #02b351;
+}
+
+.google {
+    background-color: white;
+    color: #333;
+    border: 1px solid #ddd;
+}
+.google:hover {
+    background-color: #f8f8f8;
+    border-color: #ccc;
+}
+
+/* 검색창과 글쓰기 영역 버튼 */
+.search-box {
+    display: flex; /* 가로배치 */
+    justify-content: center; /* 가운데 정렬 */
+    gap: 10px; /* 검색창과 버튼 사이 간격 */
+    max-width: 700px; /* 전체 너비 제한 */
+    margin: 0 auto 40px; /* 중앙 정렬 & 아래 여백 */
+}
+
+/* 글쓰기 버튼 전용 스타일 */
+.write-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 20px; /* 안쪽 여백 */
+    border-radius: 6px; /* 둥근 모서리 */
+    font-weight: bold;
+    white-space: nowrap; /* 글자가 줄바꿈 되지 않게 한 줄로 유지 */
+    transition: background 0.3s;
+    display: flex; /* 글자 세로 중앙 정렬을 위해 */
+    align-items: center;
+}
+
+.write-btn:hover {
+    background-color: #0056b3; /* 마우스 올리면 진해짐 */
+}
+
+/* 푸터 */
+footer {
+    text-align: center;
+    padding: 40px;
+    color: #888;
+    font-size: 14px;
+    border-top: 1px solid #eee;
+    margin-top: 60px;
+}
+
+/* 브라우저 기본 눈 아이콘 숨기기 */
+/* 엣지(Edge), 익스플로러의 기본 눈 없애기 */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+/* 크롬 등 다른 브라우저의 기본 눈 없애기 */
+input[type="password"]::-webkit-contacts-auto-fill-button,
+input[type="password"]::-webkit-credentials-auto-fill-button {
+    visibility: hidden;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+}
+
+/* 로그인 페이지 추가 스타일 (찾기 & 네이버) */
+
+/* 이메일 찾기 비밀번호 찾기 링크 영역 */
+.find-links {
+    margin-top: 15px;
+    margin-bottom: 30px; /* 소셜 버튼과 간격 벌리기 */
+    font-size: 13px;
+    color: #666;
+    display: flex;
+    justify-content: center; /* 가운데 정렬 */
+    align-items: center;
+}
+
+.find-links a {
+    color: #666;
+    transition: color 0.2s;
+}
+
+.find-links a:hover {
+    color: #333;
+    text-decoration: underline;
+}
+
+.find-links .bar {
+    margin: 0 10px; /* 글자 사이 간격 */
+    color: #ddd;    /* 얇은 회색 선 */
+    font-size: 12px;
+}
+
+/* 네이버 로그인 버튼 색상 */
+.naver {
+    background-color: #03C75A; /* 네이버 고유 초록색 */
+    color: white;
+    border: none;
+}
+
+.naver:hover {
+    background-color: #02b351; /* 마우스 올렸을 때 조금 진하게 */
+}

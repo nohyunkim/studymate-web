@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스터디 모집하기 - 스터디 메이트</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo">STUDY MATE</a>
+            <nav class="nav-menu">
+                <a href="index.html">홈</a>
+                <a href="study.html">스터디 찾기</a>
+                <a href="login.html">로그인</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section>
+            <h2>✏️ 스터디 모집글 작성</h2>
+            
+            <form action="study.html">
+                <div class="input-group">
+                    <label>스터디 제목</label>
+                    <input type="text" placeholder="예) 강남역 토요일 아침 영어회화 모집합니다" required>
+                </div>
+
+                <div style="display: flex; gap: 20px;">
+                    <div class="input-group" style="flex: 1;">
+                        <label>카테고리</label>
+                        <select>
+                            <option>선택해주세요</option>
+
+                            <optgroup label="취업 / 커리어">
+                                <option>취업 준비</option>
+                                <option>자소서 / 포트폴리오</option>
+                                <option>면접 준비</option>
+                                <option>공기업 / 공시</option>
+                            </optgroup>
+
+                            <optgroup label="자격증">
+                                <option>컴퓨터활용능력</option>
+                                <option>한국사능력검정</option>
+                                <option>토익 / 토플</option>
+                                <option>한국어능력시험</option>
+                                <option>정보처리기사</option>
+                                <option>기타 자격증</option>
+                            </optgroup>
+
+                            <optgroup label="어학 / 외국어">
+                                <option>영어 회화</option>
+                                <option>토익 / 토플</option>
+                                <option>오픽 / 스피킹</option>
+                                <option>일본어</option>
+                                <option>중국어</option>
+                                <option>기타 외국어</option>
+                            </optgroup>
+
+                            <optgroup label="습관 / 자기관리">
+                                <option>공부 인증</option>
+                                <option>루틴 관리</option>
+                                <option>아침형 인간</option>
+                                <option>운동 인증</option>
+                                <option>식단 관리</option>
+                            </optgroup>
+
+                            <optgroup label="IT / 개발">
+                                <option>웹 개발</option>
+                                <option>앱 개발</option>
+                                <option>알고리즘 / 코딩테스트</option>
+                                <option>데이터 분석</option>
+                                <option>AI / 머신러닝</option>
+                                <option>보안 / 해킹</option>
+                            </optgroup>
+
+                            <optgroup label="취미 / 기타">
+                                <option>독서</option>
+                                <option>헬스 / 운동</option>
+                                <option>러닝 / 마라톤</option>
+                                <option>요가 / 스트레칭</option>
+                                <option>악기 연습</option>
+                                <option>그림 / 드로잉</option>
+                                <option>사진 / 영상</option>
+                                <option>재테크 공부</option>
+                                <option>기타</option>
+                            </optgroup>
+                        </select>
+
+
+                    </div>
+                    <div class="input-group" style="flex: 1;">
+                        <label>모집 인원</label>
+                        <input type="number" placeholder="명" min="1">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>상세 내용</label>
+                    <textarea placeholder="스터디 목표, 진행 방식, 시간, 장소 등을 자세히 적어주세요."></textarea>
+                </div>
+
+                <button type="submit" class="primary-btn">작성 완료</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 Study Mate. Designed by 김노현</p>
+    </footer>
+
+</body>
+</html>
