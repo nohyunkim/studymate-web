@@ -1,24 +1,24 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Study
-from datetime import datetime
-from sqlalchemy.sql.expression import func   # ✅ 추가
+from sqlalchemy.sql.expression import func
+import os
 
 app = Flask(__name__)
 
-# 🔑 세션용 시크릿 키
+# 세션용 시크릿 키
 app.secret_key = 'secret-key-1234'
 
-# DB 설정
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+# DB 설정 (instance/database.db 사용)
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = \
+    'sqlite:///' + os.path.join(BASE_DIR, 'instance', 'database.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # DB 연결
 db.init_app(app)
 
-# ===============================
-# 1. 메인 페이지 (랜덤 3개)
-# ===============================
+# 1. 메인 페이지 (랜덤 3개 스터디)
 @app.route('/')
 def home():
     random_studies = Study.query.order_by(func.random()).limit(3).all()
@@ -31,11 +31,9 @@ def home():
 
 @app.route('/index.html')
 def index():
-    return home()
+    return redirect(url_for('home'))
 
-# ===============================
 # 2. 로그인
-# ===============================
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -53,17 +51,37 @@ def login():
 
     return render_template('login.html')
 
-# ===============================
 # 3. 로그아웃
-# ===============================
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('home'))
 
-# ===============================
-# 4. 회원가입
-# ===============================
+# 4. 아이디 중복 확인 (AJAX)
+@app.route('/check-userid')
+def check_userid():
+    userid = request.args.get('userid')
+
+    if not userid:
+        return jsonify({
+            'available': False,
+            'message': '아이디를 입력하세요.'
+        })
+
+    user = User.query.filter_by(userid=userid).first()
+
+    if user:
+        return jsonify({
+            'available': False,
+            'message': '이미 사용 중인 아이디입니다.'
+        })
+    else:
+        return jsonify({
+            'available': True,
+            'message': '사용 가능한 아이디입니다!'
+        })
+
+# 5. 회원가입
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -97,9 +115,7 @@ def signup():
 
     return render_template('signup.html')
 
-# ===============================
-# 5. 스터디 목록
-# ===============================
+# 6. 스터디 목록
 @app.route('/study')
 def study():
     page = request.args.get('page', 1, type=int)
@@ -114,9 +130,7 @@ def study():
         user_nickname=session.get('user_nickname')
     )
 
-# ===============================
-# 6. 스터디 글쓰기
-# ===============================
+# 7. 스터디 글쓰기
 @app.route('/study/write', methods=['GET', 'POST'])
 def studywrite():
     if 'user_id' not in session:
@@ -141,9 +155,7 @@ def studywrite():
         user_nickname=session.get('user_nickname')
     )
 
-# ===============================
-# 7. 스터디 상세
-# ===============================
+# 8. 스터디 상세
 @app.route('/study/<int:study_id>')
 def study_detail(study_id):
     study = Study.query.get_or_404(study_id)
@@ -154,9 +166,7 @@ def study_detail(study_id):
         user_nickname=session.get('user_nickname')
     )
 
-# ===============================
-# 8. 스터디 삭제
-# ===============================
+# 9. 스터디 삭제
 @app.route('/study/<int:study_id>/delete')
 def study_delete(study_id):
     study = Study.query.get_or_404(study_id)
@@ -169,8 +179,7 @@ def study_delete(study_id):
 
     return redirect(url_for('study'))
 
-# ===============================
-# 9. 스터디 수정
+# 10. 스터디 수정
 @app.route('/study/<int:study_id>/edit', methods=['GET', 'POST'])
 def study_edit(study_id):
     study = Study.query.get_or_404(study_id)
