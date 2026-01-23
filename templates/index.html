@@ -4,28 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>스터디 메이트 - 홈</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">  <!-- 웹 폰트 -->
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>  <!-- 공통 스타일 시트 -->
 </head>
+
 <body>
 
-        <!-- 상단 네비게이션 바 -> 모든 페이지에서 공통으로 사용 -->
-
+    <!-- 상단 네비게이션 바 -->
     <header>
-        <div class="nav-container"> 
+        <div class="nav-container">
             <a href="{{ url_for('index') }}" class="logo">STUDY MATE</a>
+
             <nav class="nav-menu">
                 <a href="{{ url_for('index') }}">홈</a>
                 <a href="{{ url_for('study') }}">스터디 찾기</a>
-                
-                <a href="{{ url_for('login') }}">로그인</a>
+
+                {% if user_nickname %}
+                <div class="user-dropdown">
+                    <button class="user-btn" onclick="toggleDropdown()">
+                        {{ user_nickname }} <span class="arrow">▾</span>
+                    </button>
+
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="#">마이페이지</a>
+                        <a href="#">내가 쓴 글</a>
+                        <hr>
+                        <a href="{{ url_for('logout') }}">로그아웃</a>
+                    </div>
+                </div>
+                {% else %}
+                    <a href="{{ url_for('login') }}">로그인</a>
+                {% endif %}
             </nav>
         </div>
-    </header>  
+    </header>
+
 
     <main>
-        <section> <!-- 서비스 소개 섹션 -->
+        <!-- 서비스 소개 -->
+        <section>
             <h2>👋 서비스 소개</h2>
             <p style="font-size: 18px; color: #555;">
                 혼자 하는 공부가 지치셨나요?<br>
@@ -33,36 +51,42 @@
             </p>
         </section>
 
-        <section> <!-- 인기 스터디 목록 섹션 -->
+        <!-- 인기 스터디 -->
+        <section>
             <h2>🔥 인기 스터디</h2>
-            <div class="study-list"> <!-- 개별 스터디 카드 -->
+            <div class="study-list">
                 <article class="card">
                     <h3>웹 개발 기초반</h3>
                     <p>HTML/CSS부터 시작하는 왕초보 반입니다.</p>
-                    <span class="tag">온라인</span> <span class="tag">주 2회</span>
+                    <span class="tag">온라인</span>
+                    <span class="tag">주 2회</span>
                 </article>
 
                 <article class="card">
                     <h3>영어 회화 (강남)</h3>
                     <p>토요일 오전 10시, 오프라인 모임입니다.</p>
-                    <span class="tag">오프라인</span> <span class="tag">중급</span>
+                    <span class="tag">오프라인</span>
+                    <span class="tag">중급</span>
                 </article>
 
                 <article class="card">
                     <h3>알고리즘 뿌수기</h3>
                     <p>백준, 프로그래머스 문제 풀이 공유해요.</p>
-                    <span class="tag">줌(Zoom)</span> <span class="tag">매일</span>
+                    <span class="tag">줌(Zoom)</span>
+                    <span class="tag">매일</span>
                 </article>
             </div>
         </section>
 
-        <section> <!-- 스터디 신청 폼 섹션 -->
+        <!-- 스터디 신청 -->
+        <section>
             <h2>📝 바로 신청하기</h2>
-            <form action="#" method="post"> <!-- 실제 제출 기능 없이 UI만 구성 -->
+            <form action="#" method="post">
                 <div class="input-group">
                     <label>이름</label>
                     <input type="text" placeholder="이름을 입력하세요">
                 </div>
+
                 <div class="input-group">
                     <label>카테고리</label>
                     <select>
@@ -123,7 +147,8 @@
                         </optgroup>
                     </select>
                 </div>
-                <button type="button" class="primary-btn" onclick="alert('신청되었습니다!')">신청하기</button> <!-- 임시 동작 버튼 -->
+
+                <button type="button" class="primary-btn">신청하기</button>
             </form>
         </section>
     </main>
@@ -131,6 +156,24 @@
     <footer>
         <p>© 2026 Study Mate. Designed by 김노현</p>
     </footer>
+
+    <script>
+        function toggleDropdown() {
+            const menu = document.getElementById('dropdownMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // 바깥 클릭 시 닫기
+        document.addEventListener('click', function (e) {
+            const dropdown = document.querySelector('.user-dropdown');
+            const menu = document.getElementById('dropdownMenu');
+
+            if (dropdown && !dropdown.contains(e.target)) {
+                menu.style.display = 'none';
+            }
+        });
+    </script>
+
 
 </body>
 </html>

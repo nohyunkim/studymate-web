@@ -12,10 +12,27 @@
     <header>
         <div class="nav-container">
             <a href="{{ url_for('index') }}" class="logo">STUDY MATE</a>
+
             <nav class="nav-menu">
                 <a href="{{ url_for('index') }}">홈</a>
-                <a href="{{ url_for('study') }}" style="font-weight: bold; color: #007bff;">스터디 찾기</a>
-                <a href="{{ url_for('login') }}">로그인</a>
+                <a href="{{ url_for('study') }}">스터디 찾기</a>
+
+                {% if user_nickname %}
+                <div class="user-dropdown">
+                    <button class="user-btn" onclick="toggleDropdown()">
+                        {{ user_nickname }} <span class="arrow">▾</span>
+                    </button>
+
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="#">마이페이지</a>
+                        <a href="#">내가 쓴 글</a>
+                        <hr>
+                        <a href="{{ url_for('logout') }}">로그아웃</a>
+                    </div>
+                </div>
+                {% else %}
+                    <a href="{{ url_for('login') }}">로그인</a>
+                {% endif %}
             </nav>
         </div>
     </header>
@@ -27,7 +44,12 @@
             
             <div class="search-box">
                 <input type="text" placeholder="스터디 주제나 지역을 검색해보세요" style="margin-bottom: 0;">
-                <a href="{{ url_for('studywrite') }}" class="write-btn">모집하기 ✏️</a>
+                {% if user_nickname %}
+                    <a href="{{ url_for('studywrite') }}" class="write-btn">모집하기 ✏️</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="write-btn">로그인 후 모집하기 ✏️</a>
+                {% endif %}
+
             </div>
         </section>
 
@@ -35,24 +57,26 @@
             <div class="study-list">
                 
                 {% for post in pagination.items %}
-                <article class="card">
-                    <h3>{{ post.title }}</h3>
-                    
-                    <p style="color: #666; font-size: 14px; margin-bottom: 10px; min-height: 44px;">
-                        {% if post.content|length > 50 %}
-                            {{ post.content[:50] }}...
-                        {% else %}
-                            {{ post.content }}
-                        {% endif %}
-                    </p>
-                    
-                    <div style="font-size: 12px; color: #888; margin-bottom: 10px;">
-                        <span>👑 {{ post.writer }}</span> | 
-                        <span>👥 {{ post.member_count }}명 모집</span>
-                    </div>
+                <a href="{{ url_for('study_detail', study_id=post.id) }}" style="color: inherit;">
+                    <article class="card">
+                        <h3>{{ post.title }}</h3>
 
-                    <span class="tag">{{ post.category }}</span>
-                </article>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">
+                            {% if post.content|length > 50 %}
+                                {{ post.content[:50] }}...
+                            {% else %}
+                                {{ post.content }}
+                            {% endif %}
+                        </p>
+
+                        <div style="font-size: 12px; color: #888; margin-bottom: 10px;">
+                            <span>👑 {{ post.writer }}</span> |
+                            <span>👥 {{ post.member_count }}명 모집</span>
+                        </div>
+
+                        <span class="tag">{{ post.category }}</span>
+                    </article>
+                </a>
                 {% endfor %}
 
                 {% if pagination.total == 0 %}
@@ -91,6 +115,23 @@
     <footer>
         <p>© 2026 Study Mate. Designed by 김노현</p>
     </footer>
+
+    <script>
+        function toggleDropdown() {
+            const menu = document.getElementById('dropdownMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // 바깥 클릭 시 닫기
+        document.addEventListener('click', function (e) {
+            const dropdown = document.querySelector('.user-dropdown');
+            const menu = document.getElementById('dropdownMenu');
+
+            if (dropdown && !dropdown.contains(e.target)) {
+                menu.style.display = 'none';
+            }
+        });
+    </script>
 
 </body>
 </html>

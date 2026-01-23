@@ -12,28 +12,47 @@
     <header>
         <div class="nav-container">
             <a href="{{ url_for('index') }}" class="logo">STUDY MATE</a>
+
             <nav class="nav-menu">
                 <a href="{{ url_for('index') }}">홈</a>
                 <a href="{{ url_for('study') }}">스터디 찾기</a>
-                <a href="{{ url_for('login') }}">로그인</a>
+
+                {% if user_nickname %}
+                <div class="user-dropdown">
+                    <button class="user-btn" onclick="toggleDropdown()">
+                        {{ user_nickname }} <span class="arrow">▾</span>
+                    </button>
+
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="#">마이페이지</a>
+                        <a href="#">내가 쓴 글</a>
+                        <hr>
+                        <a href="{{ url_for('logout') }}">로그아웃</a>
+                    </div>
+                </div>
+                {% else %}
+                    <a href="{{ url_for('login') }}">로그인</a>
+                {% endif %}
             </nav>
         </div>
     </header>
+
+
 
     <main>
         <section>
             <h2>✏️ 스터디 모집글 작성</h2>
             
-            <form action="{{ url_for('study') }}">
+            <form action="{{ url_for('studywrite') }}" method="POST">
                 <div class="input-group">
                     <label>스터디 제목</label>
-                    <input type="text" placeholder="예) 강남역 토요일 아침 영어회화 모집합니다" required>
+                    <input type="text" name="title" required>
                 </div>
 
                 <div style="display: flex; gap: 20px;">
                     <div class="input-group" style="flex: 1;">
                         <label>카테고리</label>
-                        <select>
+                        <select name="category" required>
                             <option>선택해주세요</option>
 
                             <optgroup label="취업 / 커리어">
@@ -95,13 +114,13 @@
                     </div>
                     <div class="input-group" style="flex: 1;">
                         <label>모집 인원</label>
-                        <input type="number" placeholder="명" min="1">
+                        <input type="number" name="member_count" min="1" required>
                     </div>
                 </div>
 
                 <div class="input-group">
                     <label>상세 내용</label>
-                    <textarea placeholder="스터디 목표, 진행 방식, 시간, 장소 등을 자세히 적어주세요."></textarea>
+                    <textarea name="content" required></textarea>
                 </div>
 
                 <button type="submit" class="primary-btn">작성 완료</button>
@@ -112,6 +131,23 @@
     <footer>
         <p>© 2026 Study Mate. Designed by 김노현</p>
     </footer>
+
+    <script>
+        function toggleDropdown() {
+            const menu = document.getElementById('dropdownMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // 바깥 클릭 시 닫기
+        document.addEventListener('click', function (e) {
+            const dropdown = document.querySelector('.user-dropdown');
+            const menu = document.getElementById('dropdownMenu');
+
+            if (dropdown && !dropdown.contains(e.target)) {
+                menu.style.display = 'none';
+            }
+        });
+    </script>
 
 </body>
 </html>

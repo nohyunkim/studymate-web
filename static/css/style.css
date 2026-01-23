@@ -39,7 +39,7 @@ header {
     color: #007bff;
 }
 
-.nav-menu a {
+.nav-menu > a {
     color: #555;
     margin-left: 20px;
     font-size: 15px;
@@ -435,4 +435,67 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 .pagination span {
     color: #ccc; /* 비활성 화살표 */
     padding: 8px 12px;
+}
+
+/* --- 유저 드롭다운 --- */
+.user-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.user-btn {
+    background: none;
+    border: none;
+    font-size: 15px;
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.user-btn:hover {
+    color: #007bff;
+}
+
+.arrow {
+    font-size: 12px;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 120%;
+    right: 0;
+    width: 150px;
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    padding: 8px 0;
+    box-sizing: border-box;
+    display: none;
+    z-index: 1000;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: #333;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f5f7fa;
+}
+
+.dropdown-menu hr {
+    margin: 6px 0;
+    border: none;
+    border-top: 1px solid #eee;
+}
+
+.nav-menu a.active {
+    color: #007bff;
+    font-weight: bold;
 }
