@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Study
 from datetime import datetime
+from sqlalchemy.sql.expression import func   # ✅ 추가
 
 app = Flask(__name__)
 
@@ -15,19 +16,26 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # DB 연결
 db.init_app(app)
 
-# 1. 메인 페이지
+# ===============================
+# 1. 메인 페이지 (랜덤 3개)
+# ===============================
 @app.route('/')
 def home():
+    random_studies = Study.query.order_by(func.random()).limit(3).all()
+
     return render_template(
         'index.html',
-        user_nickname=session.get('user_nickname')
+        user_nickname=session.get('user_nickname'),
+        random_studies=random_studies
     )
 
 @app.route('/index.html')
 def index():
     return home()
 
+# ===============================
 # 2. 로그인
+# ===============================
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -41,17 +49,21 @@ def login():
             session['user_nickname'] = user.nickname
             return redirect(url_for('home'))
         else:
-            return "아이디 또는 비밀번호가 틀렸습니다! (뒤로가기 눌러주세요)"
+            return "아이디 또는 비밀번호가 틀렸습니다!"
 
     return render_template('login.html')
 
+# ===============================
 # 3. 로그아웃
+# ===============================
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('home'))
 
+# ===============================
 # 4. 회원가입
+# ===============================
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -85,7 +97,9 @@ def signup():
 
     return render_template('signup.html')
 
+# ===============================
 # 5. 스터디 목록
+# ===============================
 @app.route('/study')
 def study():
     page = request.args.get('page', 1, type=int)
@@ -100,25 +114,21 @@ def study():
         user_nickname=session.get('user_nickname')
     )
 
+# ===============================
 # 6. 스터디 글쓰기
+# ===============================
 @app.route('/study/write', methods=['GET', 'POST'])
 def studywrite():
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        title = request.form['title']
-        category = request.form['category']
-        member_count = request.form['member_count']
-        content = request.form['content']
-        writer = session.get('user_nickname')
-
         new_study = Study(
-            title=title,
-            category=category,
-            member_count=member_count,
-            content=content,
-            writer=writer
+            title=request.form['title'],
+            category=request.form['category'],
+            member_count=request.form['member_count'],
+            content=request.form['content'],
+            writer=session.get('user_nickname')
         )
 
         db.session.add(new_study)
@@ -131,7 +141,9 @@ def studywrite():
         user_nickname=session.get('user_nickname')
     )
 
-# 7. 스터디 상세 페이지
+# ===============================
+# 7. 스터디 상세
+# ===============================
 @app.route('/study/<int:study_id>')
 def study_detail(study_id):
     study = Study.query.get_or_404(study_id)
@@ -142,11 +154,13 @@ def study_detail(study_id):
         user_nickname=session.get('user_nickname')
     )
 
+# ===============================
+# 8. 스터디 삭제
+# ===============================
 @app.route('/study/<int:study_id>/delete')
 def study_delete(study_id):
     study = Study.query.get_or_404(study_id)
 
-    # 작성자 아니면 접근 금지
     if session.get('user_nickname') != study.writer:
         return "삭제 권한이 없습니다."
 
@@ -155,6 +169,8 @@ def study_delete(study_id):
 
     return redirect(url_for('study'))
 
+# ===============================
+# 9. 스터디 수정
 @app.route('/study/<int:study_id>/edit', methods=['GET', 'POST'])
 def study_edit(study_id):
     study = Study.query.get_or_404(study_id)

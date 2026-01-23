@@ -51,32 +51,37 @@
             </p>
         </section>
 
-        <!-- 인기 스터디 -->
+        <!-- 스터디 참여 -->
         <section>
-            <h2>🔥 인기 스터디</h2>
+            <h2>🔥 스터디 참여하기</h2>
+
             <div class="study-list">
-                <article class="card">
-                    <h3>웹 개발 기초반</h3>
-                    <p>HTML/CSS부터 시작하는 왕초보 반입니다.</p>
-                    <span class="tag">온라인</span>
-                    <span class="tag">주 2회</span>
-                </article>
+                {% for study in random_studies %}
+                <a href="{{ url_for('study_detail', study_id=study.id) }}"
+                style="color: inherit;">
+                    <article class="card">
+                        <h3>{{ study.title }}</h3>
 
-                <article class="card">
-                    <h3>영어 회화 (강남)</h3>
-                    <p>토요일 오전 10시, 오프라인 모임입니다.</p>
-                    <span class="tag">오프라인</span>
-                    <span class="tag">중급</span>
-                </article>
+                        <p>
+                            {% if study.content|length > 50 %}
+                                {{ study.content[:50] }}...
+                            {% else %}
+                                {{ study.content }}
+                            {% endif %}
+                        </p>
 
-                <article class="card">
-                    <h3>알고리즘 뿌수기</h3>
-                    <p>백준, 프로그래머스 문제 풀이 공유해요.</p>
-                    <span class="tag">줌(Zoom)</span>
-                    <span class="tag">매일</span>
-                </article>
+                        <span class="tag">{{ study.category }}</span>
+                        <span class="tag">👥 {{ study.member_count }}명</span>
+                    </article>
+                </a>
+                {% endfor %}
             </div>
+
+            {% if random_studies|length == 0 %}
+                <p style="color:#888;">아직 등록된 스터디가 없습니다.</p>
+            {% endif %}
         </section>
+
 
         <!-- 스터디 신청 -->
         <section>
