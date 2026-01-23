@@ -8,33 +8,33 @@
 
 <body>
 
-    <header>
-        <div class="nav-container">
-            <a href="{{ url_for('index') }}" class="logo">STUDY MATE</a>
+<header>
+    <div class="nav-container">
+        <a href="{{ url_for('index') }}" class="logo">STUDY MATE</a>
 
-            <nav class="nav-menu">
-                <a href="{{ url_for('index') }}">홈</a>
-                <a href="{{ url_for('study') }}">스터디 찾기</a>
+        <nav class="nav-menu">
+            <a href="{{ url_for('index') }}">홈</a>
+            <a href="{{ url_for('study') }}">스터디 찾기</a>
 
-                {% if user_nickname %}
-                <div class="user-dropdown">
-                    <button class="user-btn" onclick="toggleDropdown()">
-                        {{ user_nickname }} <span class="arrow">▾</span>
-                    </button>
+            {% if user_nickname %}
+            <div class="user-dropdown">
+                <button class="user-btn" onclick="toggleDropdown()">
+                    {{ user_nickname }} <span class="arrow">▾</span>
+                </button>
 
-                    <div class="dropdown-menu" id="dropdownMenu">
-                        <a href="#">마이페이지</a>
-                        <a href="#">내가 쓴 글</a>
-                        <hr>
-                        <a href="{{ url_for('logout') }}">로그아웃</a>
-                    </div>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="#">마이페이지</a>
+                    <a href="#">내가 쓴 글</a>
+                    <hr>
+                    <a href="{{ url_for('logout') }}">로그아웃</a>
                 </div>
-                {% else %}
-                    <a href="{{ url_for('login') }}">로그인</a>
-                {% endif %}
-            </nav>
-        </div>
-    </header>
+            </div>
+            {% else %}
+                <a href="{{ url_for('login') }}">로그인</a>
+            {% endif %}
+        </nav>
+    </div>
+</header>
 
 <main>
     <section>
@@ -48,9 +48,25 @@
 
         <hr style="margin: 30px 0;">
 
+        <!-- 📌 스터디 본문 -->
         <p style="white-space: pre-line; font-size: 15px; line-height: 1.7;">
             {{ study.content }}
         </p>
+
+        <!-- 작성자만 보이는 수정/삭제 버튼 -->
+        {% if user_nickname == study.writer %}
+        <div class="action-buttons">
+            <a href="{{ url_for('study_edit', study_id=study.id) }}" class="btn-edit">
+                수정
+            </a>
+
+            <a href="{{ url_for('study_delete', study_id=study.id) }}"
+            class="btn-delete"
+            onclick="return confirm('정말로 삭제하시겠습니까?');">
+                삭제
+            </a>
+        </div>
+        {% endif %}
     </section>
 </main>
 
@@ -58,22 +74,22 @@
     <p>© 2026 Study Mate. Designed by 김노현</p>
 </footer>
 
-    <script>
-        function toggleDropdown() {
-            const menu = document.getElementById('dropdownMenu');
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+<script>
+    function toggleDropdown() {
+        const menu = document.getElementById('dropdownMenu');
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // 바깥 클릭 시 닫기
+    document.addEventListener('click', function (e) {
+        const dropdown = document.querySelector('.user-dropdown');
+        const menu = document.getElementById('dropdownMenu');
+
+        if (dropdown && !dropdown.contains(e.target)) {
+            menu.style.display = 'none';
         }
-
-        // 바깥 클릭 시 닫기
-        document.addEventListener('click', function (e) {
-            const dropdown = document.querySelector('.user-dropdown');
-            const menu = document.getElementById('dropdownMenu');
-
-            if (dropdown && !dropdown.contains(e.target)) {
-                menu.style.display = 'none';
-            }
-        });
-    </script>
+    });
+</script>
 
 </body>
 </html>

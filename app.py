@@ -142,6 +142,41 @@ def study_detail(study_id):
         user_nickname=session.get('user_nickname')
     )
 
+@app.route('/study/<int:study_id>/delete')
+def study_delete(study_id):
+    study = Study.query.get_or_404(study_id)
+
+    # 작성자 아니면 접근 금지
+    if session.get('user_nickname') != study.writer:
+        return "삭제 권한이 없습니다."
+
+    db.session.delete(study)
+    db.session.commit()
+
+    return redirect(url_for('study'))
+
+@app.route('/study/<int:study_id>/edit', methods=['GET', 'POST'])
+def study_edit(study_id):
+    study = Study.query.get_or_404(study_id)
+
+    if session.get('user_nickname') != study.writer:
+        return "수정 권한이 없습니다."
+
+    if request.method == 'POST':
+        study.title = request.form['title']
+        study.category = request.form['category']
+        study.member_count = request.form['member_count']
+        study.content = request.form['content']
+
+        db.session.commit()
+        return redirect(url_for('study_detail', study_id=study.id))
+
+    return render_template(
+        'study_edit.html',
+        study=study,
+        user_nickname=session.get('user_nickname')
+    )
+
 # 서버 실행
 if __name__ == '__main__':
     with app.app_context():
