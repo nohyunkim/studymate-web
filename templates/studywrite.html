@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>스터디 모집하기 - 스터디 메이트</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
     <header>
         <div class="nav-container">
-            <a href="index.html" class="logo">STUDY MATE</a>
+            <a href="{{ url_for('index') }}" class="logo">STUDY MATE</a>
             <nav class="nav-menu">
-                <a href="index.html">홈</a>
-                <a href="study.html">스터디 찾기</a>
-                <a href="login.html">로그인</a>
+                <a href="{{ url_for('index') }}">홈</a>
+                <a href="{{ url_for('study') }}">스터디 찾기</a>
+                <a href="{{ url_for('login') }}">로그인</a>
             </nav>
         </div>
     </header>
@@ -24,7 +24,7 @@
         <section>
             <h2>✏️ 스터디 모집글 작성</h2>
             
-            <form action="study.html">
+            <form action="{{ url_for('study') }}">
                 <div class="input-group">
                     <label>스터디 제목</label>
                     <input type="text" placeholder="예) 강남역 토요일 아침 영어회화 모집합니다" required>

@@ -5,19 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>스터디 찾기 - 스터디 메이트</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
     <header>
         <div class="nav-container">
-            <a href="index.html" class="logo">STUDY MATE</a>
+            <a href="{{ url_for('index') }}" class="logo">STUDY MATE</a>
             <nav class="nav-menu">
-                <a href="index.html">홈</a>
-                <a href="study.html" style="font-weight: bold; color: #007bff;">스터디 찾기</a> <a href="login.html">로그인</a>
+                <a href="{{ url_for('index') }}">홈</a>
+                <a href="{{ url_for('study') }}" style="font-weight: bold; color: #007bff;">스터디 찾기</a>
+                <a href="{{ url_for('login') }}">로그인</a>
             </nav>
         </div>
     </header>
+
 
     <main>
         <section style="text-align: center;">
@@ -25,49 +27,64 @@
             
             <div class="search-box">
                 <input type="text" placeholder="스터디 주제나 지역을 검색해보세요" style="margin-bottom: 0;">
-                
-                <a href="studywrite.html" class="write-btn">모집하기 ✏️</a>
+                <a href="{{ url_for('studywrite') }}" class="write-btn">모집하기 ✏️</a>
             </div>
         </section>
 
         <section>
             <div class="study-list">
+                
+                {% for post in pagination.items %}
                 <article class="card">
-                    <h3>🌱 프론트엔드 입문</h3>
-                    <p>React, Vue 찍먹해보실 분 구합니다.</p>
-                    <span class="tag">온라인</span>
-                </article>
+                    <h3>{{ post.title }}</h3>
+                    
+                    <p style="color: #666; font-size: 14px; margin-bottom: 10px; min-height: 44px;">
+                        {% if post.content|length > 50 %}
+                            {{ post.content[:50] }}...
+                        {% else %}
+                            {{ post.content }}
+                        {% endif %}
+                    </p>
+                    
+                    <div style="font-size: 12px; color: #888; margin-bottom: 10px;">
+                        <span>👑 {{ post.writer }}</span> | 
+                        <span>👥 {{ post.member_count }}명 모집</span>
+                    </div>
 
-                <article class="card">
-                    <h3>🐍 파이썬 데이터분석</h3>
-                    <p>판다스(Pandas) 기초부터 함께해요.</p>
-                    <span class="tag">온라인</span>
+                    <span class="tag">{{ post.category }}</span>
                 </article>
+                {% endfor %}
 
-                <article class="card">
-                    <h3>☕ 자바 스프링 스터디</h3>
-                    <p>김영한님 강의 완강 목표입니다.</p>
-                    <span class="tag">오프라인</span>
-                </article>
-
-                <article class="card">
-                    <h3>🎨 UI/UX 디자인</h3>
-                    <p>피그마 포트폴리오 함께 만들어요.</p>
-                    <span class="tag">강남역</span>
-                </article>
-
-                <article class="card">
-                    <h3>📚 토익 900점 목표</h3>
-                    <p>매일 아침 단어 시험 봅니다.</p>
-                    <span class="tag">줌(Zoom)</span>
-                </article>
-
-                <article class="card">
-                    <h3>💪 헬스/운동 인증방</h3>
-                    <p>오운완 인증하고 서로 응원해요!</p>
-                    <span class="tag">습관형성</span>
-                </article>
+                {% if pagination.total == 0 %}
+                    <p style="width: 100%; text-align: center; padding: 50px; color: #888;">
+                        아직 등록된 스터디가 없습니다. 첫 번째 주인공이 되어보세요! 😎
+                    </p>
+                {% endif %}
             </div>
+
+            {% if pagination.total > 0 %}
+            <div class="pagination">
+                {% if pagination.has_prev %}
+                    <a href="?page={{ pagination.prev_num }}">&lt;</a>
+                {% endif %}
+
+                {% for page_num in pagination.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num == pagination.page %}
+                            <a href="#" class="active">{{ page_num }}</a> {% else %}
+                            <a href="?page={{ page_num }}">{{ page_num }}</a>
+                        {% endif %}
+                    {% else %}
+                        <span>...</span>
+                    {% endif %}
+                {% endfor %}
+
+                {% if pagination.has_next %}
+                    <a href="?page={{ pagination.next_num }}">&gt;</a>
+                {% endif %}
+            </div>
+            {% endif %}
+
         </section>
     </main>
 

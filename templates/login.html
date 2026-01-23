@@ -5,26 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인 - 스터디 메이트</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
     <div class="center-layout">
         <div class="login-card">
-            <a href="index.html" class="logo" style="display:block; margin-bottom: 20px;">STUDY MATE</a>
+            <a href="{{ url_for('index') }}" class="logo" style="display:block; margin-bottom: 20px;">STUDY MATE</a>
             
             <h2 style="border: none; padding: 0; font-size: 22px;">로그인</h2>
             
-            <form action="index.html" style="border: none; padding: 0; box-shadow: none;">
+            <form action="{{ url_for('login') }}" method="POST" style="border: none; padding: 0; box-shadow: none;">
+                
                 <div class="input-group" style="text-align: left;">
-                    <label>이메일</label>
-                    <input type="email" placeholder="example@email.com" required>
+                    <label>아이디</label>
+                    <input type="text" name="userid" placeholder="아이디를 입력하세요" required>
                 </div>
 
                 <div class="input-group" style="text-align: left;">
                     <label>비밀번호</label>
                     <div class="password-wrapper">
-                        <input type="password" id="password" placeholder="비밀번호 입력" required style="padding-right: 40px;">
+                        <input type="password" id="password" name="password" placeholder="비밀번호 입력" required style="padding-right: 40px;">
                         
                         <svg id="eyeIcon" class="toggle-eye" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -33,11 +34,11 @@
                     </div>
                 </div>
 
-                <button type="submit" class="primary-btn">이메일 로그인</button>
+                <button type="submit" class="primary-btn">로그인</button>
             </form>
 
             <div class="find-links">
-                <a href="#">이메일 찾기</a>
+                <a href="#">아이디 찾기</a>
                 <span class="bar">|</span>
                 <a href="#">비밀번호 찾기</a>
             </div>
@@ -62,7 +63,7 @@
             </div>
 
             <div style="margin-top: 20px; font-size: 13px;">
-                <p>계정이 없으신가요? <a href="signup.html" style="color: #007bff; font-weight: bold;">회원가입</a></p>
+                <p>계정이 없으신가요? <a href="{{ url_for('signup') }}" style="color: #007bff; font-weight: bold;">회원가입</a></p>
             </div>
         </div>
     </div>

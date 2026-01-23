@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>스터디 메이트 - 홈</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">  <!-- 웹 폰트 -->
-    <link rel="stylesheet" href="../static/css/style.css">  <!-- 공통 스타일 시트 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>  <!-- 공통 스타일 시트 -->
 </head>
 <body>
 
@@ -13,14 +14,15 @@
 
     <header>
         <div class="nav-container"> 
-            <a href="index.html" class="logo">STUDY MATE</a>  <!-- 서비스 로고 -->
-            <nav class="nav-menu"> <!-- 메인 네비게이션 메뉴 -->
-                <a href="index.html">홈</a>
-                <a href="study.html">스터디 찾기</a>
-                <a href="login.html">로그인</a>
+            <a href="{{ url_for('index') }}" class="logo">STUDY MATE</a>
+            <nav class="nav-menu">
+                <a href="{{ url_for('index') }}">홈</a>
+                <a href="{{ url_for('study') }}">스터디 찾기</a>
+                
+                <a href="{{ url_for('login') }}">로그인</a>
             </nav>
         </div>
-    </header>
+    </header>  
 
     <main>
         <section> <!-- 서비스 소개 섹션 -->
