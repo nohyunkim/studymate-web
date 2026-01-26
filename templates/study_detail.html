@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <title>{{ study.title }} - 스터디 메이트</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .comment-like-btn {
+            background: none; border: none; cursor: pointer;
+            font-size: 13px; color: #888; display: flex; align-items: center; gap: 3px;
+            margin-right: 8px; /* 버튼 간격 */
+        }
+        .comment-like-btn:hover { color: #ff4757; }
+        .liked { color: #ff4757 !important; font-weight: bold; }
+    </style>
 </head>
 
 <body>
@@ -48,25 +57,118 @@
 
         <hr style="margin: 30px 0;">
 
-        <!-- 📌 스터디 본문 -->
         <p style="white-space: pre-line; font-size: 15px; line-height: 1.7;">
             {{ study.content }}
         </p>
 
-        <!-- 작성자만 보이는 수정/삭제 버튼 -->
         {% if user_nickname == study.writer %}
         <div class="action-buttons">
-            <a href="{{ url_for('study_edit', study_id=study.id) }}" class="btn-edit">
-                수정
-            </a>
-
-            <a href="{{ url_for('study_delete', study_id=study.id) }}"
-            class="btn-delete"
-            onclick="return confirm('정말로 삭제하시겠습니까?');">
-                삭제
-            </a>
+            <a href="{{ url_for('study_edit', study_id=study.id) }}" class="btn-edit">수정</a>
+            <a href="{{ url_for('study_delete', study_id=study.id) }}" class="btn-delete" onclick="return confirm('정말로 삭제하시겠습니까?');">삭제</a>
         </div>
         {% endif %}
+
+        <hr style="margin: 40px 0; border: none; border-top: 1px solid #eee;">
+
+        <div class="comment-section">
+            <h3>💬 댓글 <span style="color:#007bff">{{ study.comments|length }}</span></h3>
+
+            <div class="comment-list">
+                {% for comment in study.comments %}
+                    {% if not comment.parent_id %}
+                    
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <strong>{{ comment.writer }}</strong>
+                            
+                            {% if comment.writer == study.writer %}
+                                <span class="writer-badge">글쓴이</span>
+                            {% endif %}
+
+                            <span class="date">{{ comment.date.strftime('%m/%d %H:%M') }}</span>
+                            
+                            <div class="comment-actions" style="display:flex; align-items:center;">
+                                <a href="{{ url_for('comment_like', comment_id=comment.id) }}" 
+                                    class="comment-like-btn {% if current_user in comment.likers %}liked{% endif %}"
+                                    style="text-decoration:none;">
+                                    {% if current_user in comment.likers %}♥{% else %}♡{% endif %}
+                                    {{ comment.likers|length }}
+                                </a>
+
+                                <button class="small-text-btn" onclick="toggleReplyForm('{{ comment.id }}')">답글</button>
+                                
+                                {% if user_nickname == comment.writer %}
+                                <a href="{{ url_for('comment_delete', comment_id=comment.id) }}" 
+                                    class="delete-text-btn" onclick="return confirm('댓글을 삭제하면 대댓글도 모두 삭제됩니다. 계속하시겠습니까?')">삭제</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <p class="comment-content">{{ comment.content }}</p>
+
+                        {% for reply in comment.replies %}
+                        <div class="reply-item">
+                            <span class="reply-icon">↳</span>
+                            <div class="reply-body">
+                                <div class="comment-header">
+                                    <strong>{{ reply.writer }}</strong>
+                                    
+                                    {% if reply.writer == study.writer %}
+                                        <span class="writer-badge">글쓴이</span>
+                                    {% endif %}
+                                    
+                                    <span class="date">{{ reply.date.strftime('%m/%d %H:%M') }}</span>
+                                    
+                                    <div class="comment-actions" style="display:flex; align-items:center;">
+                                        <a href="{{ url_for('comment_like', comment_id=reply.id) }}" 
+                                            class="comment-like-btn {% if current_user in reply.likers %}liked{% endif %}"
+                                            style="text-decoration:none;">
+                                            {% if current_user in reply.likers %}♥{% else %}♡{% endif %}
+                                            {{ reply.likers|length }}
+                                        </a>
+
+                                        {% if user_nickname == reply.writer %}
+                                        <a href="{{ url_for('comment_delete', comment_id=reply.id) }}" 
+                                            class="delete-text-btn" onclick="return confirm('삭제할까요?')">삭제</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <p class="comment-content">{{ reply.content }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        <div id="reply-form-{{ comment.id }}" class="reply-input-area" style="display:none;">
+                            <form action="{{ url_for('comment_write', study_id=study.id) }}" method="POST" style="padding:10px; border:none;">
+                                <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                <div style="display:flex; gap:10px;">
+                                    <span style="padding-top:10px;">↳</span>
+                                    <input type="text" name="content" placeholder="답글을 입력하세요..." required>
+                                    <button type="submit" class="primary-btn" style="width:80px; padding:10px;">등록</button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                    <hr class="comment-divider">
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="main-comment-form">
+                {% if user_nickname %}
+                <form action="{{ url_for('comment_write', study_id=study.id) }}" method="POST" class="comment-form-box">
+                    <input type="text" name="content" placeholder="댓글을 남겨보세요." required>
+                    <button type="submit" class="send-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </form>
+                {% else %}
+                <div style="text-align:center; padding:20px; background:#f9f9f9; border-radius:8px;">
+                    <a href="{{ url_for('login') }}" style="color:#007bff; font-weight:bold;">로그인</a> 후 댓글을 남길 수 있습니다.
+                </div>
+                {% endif %}
+            </div>
+        </div>
     </section>
 </main>
 
@@ -80,7 +182,6 @@
         menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
     }
 
-    // 바깥 클릭 시 닫기
     document.addEventListener('click', function (e) {
         const dropdown = document.querySelector('.user-dropdown');
         const menu = document.getElementById('dropdownMenu');
@@ -89,6 +190,15 @@
             menu.style.display = 'none';
         }
     });
+
+    function toggleReplyForm(commentId) {
+        const form = document.getElementById('reply-form-' + commentId);
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    }
 </script>
 
 </body>
