@@ -4,202 +4,253 @@
     <meta charset="UTF-8">
     <title>{{ study.title }} - 스터디 메이트</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
     <style>
+        /* 좋아요 버튼 스타일 */
         .comment-like-btn {
             background: none; border: none; cursor: pointer;
             font-size: 13px; color: #888; display: flex; align-items: center; gap: 3px;
-            margin-right: 8px; /* 버튼 간격 */
+            margin-right: 8px;
         }
         .comment-like-btn:hover { color: #ff4757; }
         .liked { color: #ff4757 !important; font-weight: bold; }
+        
+        /* 작성자 배지 스타일 */
+        .writer-badge {
+            background: #e8f3ff; color: #007bff; font-size: 10px; 
+            padding: 2px 6px; border-radius: 4px; font-weight: bold; 
+            margin-left: 5px; vertical-align: middle;
+        }
     </style>
 </head>
 
 <body>
 
-<header>
-    <div class="nav-container">
-        <a href="{{ url_for('index') }}" class="logo">STUDY MATE</a>
+    <header>
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="logo">STUDY MATE</a>
 
-        <nav class="nav-menu">
-            <a href="{{ url_for('index') }}">홈</a>
-            <a href="{{ url_for('study') }}">스터디 찾기</a>
+            <nav class="nav-menu">
+                <a href="{{ url_for('index') }}">홈</a>
+                <a href="{{ url_for('study') }}">스터디 찾기</a>
 
-            {% if user_nickname %}
-            <div class="user-dropdown">
-                <button class="user-btn" onclick="toggleDropdown()">
-                    {{ user_nickname }} <span class="arrow">▾</span>
-                </button>
-
-                <div class="dropdown-menu" id="dropdownMenu">
-                    <a href="#">마이페이지</a>
-                    <a href="{{ url_for('my_posts') }}">내가 쓴 글</a>
-                    <hr>
-                    <a href="{{ url_for('logout') }}">로그아웃</a>
-                </div>
-            </div>
-            {% else %}
-                <a href="{{ url_for('login') }}">로그인</a>
-            {% endif %}
-        </nav>
-    </div>
-</header>
-
-<main>
-    <section>
-        <h2>{{ study.title }}</h2>
-
-        <p style="color:#666; margin-bottom: 10px;">
-            👑 {{ study.writer }} · 👥 {{ study.member_count }}명 모집
-        </p>
-
-        <span class="tag">{{ study.category }}</span>
-
-        <hr style="margin: 30px 0;">
-
-        <p style="white-space: pre-line; font-size: 15px; line-height: 1.7;">
-            {{ study.content }}
-        </p>
-
-        {% if user_nickname == study.writer %}
-        <div class="action-buttons">
-            <a href="{{ url_for('study_edit', study_id=study.id) }}" class="btn-edit">수정</a>
-            <a href="{{ url_for('study_delete', study_id=study.id) }}" class="btn-delete" onclick="return confirm('정말로 삭제하시겠습니까?');">삭제</a>
-        </div>
-        {% endif %}
-
-        <hr style="margin: 40px 0; border: none; border-top: 1px solid #eee;">
-
-        <div class="comment-section">
-            <h3>💬 댓글 <span style="color:#007bff">{{ study.comments|length }}</span></h3>
-
-            <div class="comment-list">
-                {% for comment in study.comments %}
-                    {% if not comment.parent_id %}
-                    
-                    <div class="comment-item">
-                        <div class="comment-header">
-                            <strong>{{ comment.writer }}</strong>
-                            
-                            {% if comment.writer == study.writer %}
-                                <span class="writer-badge">글쓴이</span>
-                            {% endif %}
-
-                            <span class="date">{{ comment.date.strftime('%m/%d %H:%M') }}</span>
-                            
-                            <div class="comment-actions" style="display:flex; align-items:center;">
-                                <a href="{{ url_for('comment_like', comment_id=comment.id) }}" 
-                                    class="comment-like-btn {% if current_user in comment.likers %}liked{% endif %}"
-                                    style="text-decoration:none;">
-                                    {% if current_user in comment.likers %}♥{% else %}♡{% endif %}
-                                    {{ comment.likers|length }}
-                                </a>
-
-                                <button class="small-text-btn" onclick="toggleReplyForm('{{ comment.id }}')">답글</button>
-                                
-                                {% if user_nickname == comment.writer %}
-                                <a href="{{ url_for('comment_delete', comment_id=comment.id) }}" 
-                                    class="delete-text-btn" onclick="return confirm('댓글을 삭제하면 대댓글도 모두 삭제됩니다. 계속하시겠습니까?')">삭제</a>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <p class="comment-content">{{ comment.content }}</p>
-
-                        {% for reply in comment.replies %}
-                        <div class="reply-item">
-                            <span class="reply-icon">↳</span>
-                            <div class="reply-body">
-                                <div class="comment-header">
-                                    <strong>{{ reply.writer }}</strong>
-                                    
-                                    {% if reply.writer == study.writer %}
-                                        <span class="writer-badge">글쓴이</span>
-                                    {% endif %}
-                                    
-                                    <span class="date">{{ reply.date.strftime('%m/%d %H:%M') }}</span>
-                                    
-                                    <div class="comment-actions" style="display:flex; align-items:center;">
-                                        <a href="{{ url_for('comment_like', comment_id=reply.id) }}" 
-                                            class="comment-like-btn {% if current_user in reply.likers %}liked{% endif %}"
-                                            style="text-decoration:none;">
-                                            {% if current_user in reply.likers %}♥{% else %}♡{% endif %}
-                                            {{ reply.likers|length }}
-                                        </a>
-
-                                        {% if user_nickname == reply.writer %}
-                                        <a href="{{ url_for('comment_delete', comment_id=reply.id) }}" 
-                                            class="delete-text-btn" onclick="return confirm('삭제할까요?')">삭제</a>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <p class="comment-content">{{ reply.content }}</p>
-                            </div>
-                        </div>
-                        {% endfor %}
-
-                        <div id="reply-form-{{ comment.id }}" class="reply-input-area" style="display:none;">
-                            <form action="{{ url_for('comment_write', study_id=study.id) }}" method="POST" style="padding:10px; border:none;">
-                                <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                                <div style="display:flex; gap:10px;">
-                                    <span style="padding-top:10px;">↳</span>
-                                    <input type="text" name="content" placeholder="답글을 입력하세요..." required>
-                                    <button type="submit" class="primary-btn" style="width:80px; padding:10px;">등록</button>
-                                </div>
-                            </form>
-                        </div>
-
-                    </div>
-                    <hr class="comment-divider">
-                    {% endif %}
-                {% endfor %}
-            </div>
-
-            <div class="main-comment-form">
                 {% if user_nickname %}
-                <form action="{{ url_for('comment_write', study_id=study.id) }}" method="POST" class="comment-form-box">
-                    <input type="text" name="content" placeholder="댓글을 남겨보세요." required>
-                    <button type="submit" class="send-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                <div class="user-dropdown">
+                    <button class="user-btn" onclick="toggleDropdown()">
+                        {{ user_nickname }} <span class="arrow">▾</span>
                     </button>
-                </form>
-                {% else %}
-                <div style="text-align:center; padding:20px; background:#f9f9f9; border-radius:8px;">
-                    <a href="{{ url_for('login') }}" style="color:#007bff; font-weight:bold;">로그인</a> 후 댓글을 남길 수 있습니다.
+
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="{{ url_for('mypage') }}">마이페이지</a>
+                        <a href="{{ url_for('my_posts') }}">내가 쓴 글</a>
+                        <hr>
+                        <a href="{{ url_for('logout') }}">로그아웃</a>
+                    </div>
                 </div>
+                {% else %}
+                    <a href="{{ url_for('login') }}">로그인</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section>
+            <h2>{{ study.title }}</h2>
+
+            <p style="color:#666; margin-bottom: 10px;">
+                👑 <a href="{{ url_for('profile', nickname=study.writer) }}" style="font-weight:bold; color:#007bff; text-decoration:underline;">
+                    {{ study.writer }}
+                </a> 
+                · 👥 {{ study.member_count }}명 모집
+            </p>
+
+            <span class="tag">{{ study.category }}</span>
+
+            <hr style="margin: 30px 0;">
+
+            <p style="white-space: pre-line; font-size: 15px; line-height: 1.7;">
+                {{ study.content }}
+            </p>
+
+            <div style="margin: 40px 0; text-align: center;">
+                
+                {% if user_nickname == study.writer %}
+                    {% elif not user_nickname %}
+                    <a href="{{ url_for('login') }}" class="primary-btn" style="width:auto;">로그인 후 신청하기</a>
+
+                {% elif applied_status == None %}
+                    <a href="{{ url_for('study_apply', study_id=study.id) }}" class="primary-btn" style="width:auto;" onclick="return confirm('스터디에 신청하시겠습니까?')">🚀 스터디 신청하기</a>
+
+                {% elif applied_status == 0 %}
+                    <button class="primary-btn" style="background:#ffc107; color:black; cursor:default; width:auto;">⏳ 승인 대기중...</button>
+
+                {% elif applied_status == 1 %}
+                    <div style="background:#e8f3ff; padding:20px; border-radius:10px; border:1px solid #007bff; display:inline-block; text-align:left;">
+                        <h3 style="margin:0 0 10px 0; color:#007bff; font-size:18px;">🎉 스터디 합류를 환영합니다!</h3>
+                        {% if study.chat_link %}
+                            <p style="margin-bottom:10px;">아래 링크를 통해 단톡방에 참여해주세요.</p>
+                            <a href="{{ study.chat_link }}" target="_blank" style="background:#fee500; color:#3c1e1e; padding:10px 20px; text-decoration:none; border-radius:6px; font-weight:bold; display:inline-block;">
+                                👉 카카오톡 오픈채팅 입장
+                            </a>
+                        {% else %}
+                            <p>아직 채팅방 링크가 등록되지 않았습니다.</p>
+                        {% endif %}
+                    </div>
                 {% endif %}
             </div>
-        </div>
-    </section>
-</main>
 
-<footer>
-    <p>© 2026 Study Mate. Designed by 김노현</p>
-</footer>
+            {% if user_nickname == study.writer %}
+                <div style="text-align: center; margin-bottom: 30px;">
+                    
+                    {% if study.chat_link %}
+                    <div style="margin-bottom: 15px; font-size: 15px; color: #555;">
+                        <span style="font-weight: bold; color: #333;">💬 채팅 참여하기 :</span> 
+                        <a href="{{ study.chat_link }}" target="_blank" style="color: #007bff; text-decoration: underline;">
+                            {{ study.chat_link }}
+                        </a>
+                    </div>
+                    {% else %}
+                    <div style="margin-bottom: 15px; font-size: 14px; color: #888;">
+                        (등록된 채팅방 링크가 없습니다)
+                    </div>
+                    {% endif %}
 
-<script>
-    function toggleDropdown() {
-        const menu = document.getElementById('dropdownMenu');
-        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-    }
+                    <div class="action-buttons">
+                        <a href="{{ url_for('study_edit', study_id=study.id) }}" class="btn-edit">수정</a>
+                        <a href="{{ url_for('study_delete', study_id=study.id) }}" class="btn-delete" onclick="return confirm('정말로 삭제하시겠습니까?');">삭제</a>
+                    </div>
+                </div>
+            {% endif %}
 
-    document.addEventListener('click', function (e) {
-        const dropdown = document.querySelector('.user-dropdown');
-        const menu = document.getElementById('dropdownMenu');
+            <hr style="margin: 40px 0; border: none; border-top: 1px solid #eee;">
 
-        if (dropdown && !dropdown.contains(e.target)) {
-            menu.style.display = 'none';
+            <div class="comment-section">
+                <h3>💬 댓글 <span style="color:#007bff">{{ study.comments|length }}</span></h3>
+
+                <div class="comment-list">
+                    {% for comment in study.comments %}
+                        {% if not comment.parent_id %}
+                        
+                        <div class="comment-item">
+                            <div class="comment-header">
+                                <strong>{{ comment.writer }}</strong>
+                                {% if comment.writer == study.writer %}
+                                    <span class="writer-badge">글쓴이</span>
+                                {% endif %}
+                                <span class="date">{{ comment.date.strftime('%m/%d %H:%M') }}</span>
+                                
+                                <div class="comment-actions" style="display:flex; align-items:center;">
+                                    <a href="{{ url_for('comment_like', comment_id=comment.id) }}" 
+                                       class="comment-like-btn {% if current_user in comment.likers %}liked{% endif %}"
+                                       style="text-decoration:none;">
+                                        {% if current_user in comment.likers %}♥{% else %}♡{% endif %}
+                                        {{ comment.likers|length }}
+                                    </a>
+
+                                    <button class="small-text-btn" onclick="toggleReplyForm('{{ comment.id }}')">답글</button>
+                                    
+                                    {% if user_nickname == comment.writer %}
+                                    <a href="{{ url_for('comment_delete', comment_id=comment.id) }}" 
+                                       class="delete-text-btn" onclick="return confirm('삭제하시겠습니까?')">삭제</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <p class="comment-content">{{ comment.content }}</p>
+
+                            {% for reply in comment.replies %}
+                            <div class="reply-item">
+                                <span class="reply-icon">↳</span>
+                                <div class="reply-body">
+                                    <div class="comment-header">
+                                        <strong>{{ reply.writer }}</strong>
+                                        {% if reply.writer == study.writer %}
+                                            <span class="writer-badge">글쓴이</span>
+                                        {% endif %}
+                                        <span class="date">{{ reply.date.strftime('%m/%d %H:%M') }}</span>
+                                        
+                                        <div class="comment-actions" style="display:flex; align-items:center;">
+                                            <a href="{{ url_for('comment_like', comment_id=reply.id) }}" 
+                                               class="comment-like-btn {% if current_user in reply.likers %}liked{% endif %}"
+                                               style="text-decoration:none;">
+                                                {% if current_user in reply.likers %}♥{% else %}♡{% endif %}
+                                                {{ reply.likers|length }}
+                                            </a>
+
+                                            {% if user_nickname == reply.writer %}
+                                            <a href="{{ url_for('comment_delete', comment_id=reply.id) }}" 
+                                               class="delete-text-btn" onclick="return confirm('삭제할까요?')">삭제</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <p class="comment-content">{{ reply.content }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                            <div id="reply-form-{{ comment.id }}" class="reply-input-area" style="display:none;">
+                                <form action="{{ url_for('comment_write', study_id=study.id) }}" method="POST" style="padding:10px; border:none;">
+                                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                    <div style="display:flex; gap:10px;">
+                                        <span style="padding-top:10px;">↳</span>
+                                        <input type="text" name="content" placeholder="답글을 입력하세요..." required>
+                                        <button type="submit" class="primary-btn" style="width:80px; padding:10px;">등록</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                        <hr class="comment-divider">
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <div class="main-comment-form">
+                    {% if user_nickname %}
+                    <form action="{{ url_for('comment_write', study_id=study.id) }}" method="POST" class="comment-form-box">
+                        <input type="text" name="content" placeholder="댓글을 남겨보세요." required>
+                        <button type="submit" class="send-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        </button>
+                    </form>
+                    {% else %}
+                    <div style="text-align:center; padding:20px; background:#f9f9f9; border-radius:8px;">
+                        <a href="{{ url_for('login') }}" style="color:#007bff; font-weight:bold;">로그인</a> 후 댓글을 남길 수 있습니다.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 Study Mate. Designed by 김노현</p>
+    </footer>
+
+    <script>
+        function toggleDropdown() {
+            const menu = document.getElementById('dropdownMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
         }
-    });
 
-    function toggleReplyForm(commentId) {
-        const form = document.getElementById('reply-form-' + commentId);
-        if (form.style.display === 'none') {
-            form.style.display = 'block';
-        } else {
-            form.style.display = 'none';
+        document.addEventListener('click', function (e) {
+            const dropdown = document.querySelector('.user-dropdown');
+            const menu = document.getElementById('dropdownMenu');
+
+            if (dropdown && !dropdown.contains(e.target)) {
+                menu.style.display = 'none';
+            }
+        });
+
+        function toggleReplyForm(commentId) {
+            const form = document.getElementById('reply-form-' + commentId);
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
+            }
         }
-    }
-</script>
+    </script>
 
 </body>
 </html>

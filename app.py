@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-# [중요] models에서 Comment가 꼭 추가되어 있어야 합니다!
-from models import db, User, Study, Comment
+# [중요] models에서 Enrollment 추가된 것 확인하세요!
+from models import db, User, Study, Comment, Enrollment
 from sqlalchemy.sql.expression import func
 import os
 
@@ -12,14 +12,20 @@ app.secret_key = 'secret-key-1234'
 
 # DB 설정 (instance/database.db 파일 사용)
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+db_folder = os.path.join(BASE_DIR, 'instance')
+
+# instance 폴더가 없으면 에러가 나므로, 없으면 자동으로 만들어주는 코드
+if not os.path.exists(db_folder):
+    os.makedirs(db_folder)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = \
-    'sqlite:///' + os.path.join(BASE_DIR, 'instance', 'database.db')
+    'sqlite:///' + os.path.join(db_folder, 'database.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # DB 연결 초기화
 db.init_app(app)
 
-# 1. 메인 페이지 (랜덤 스터디 3개 추천)
+# 1. 메인 페이지 (랜덤 스터디 3개로 추천해줌)
 @app.route('/')
 def home():
     # func.random()을 사용해서 스터디 중 3개를 무작위로 뽑아옵니다.
@@ -154,6 +160,8 @@ def studywrite():
             category=request.form['category'],
             member_count=request.form['member_count'],
             content=request.form['content'],
+            # [NEW] 채팅방 링크 가져오기 (없으면 None)
+            chat_link=request.form.get('chat_link'), 
             writer=session.get('user_nickname') # 현재 로그인한 사람 닉네임
         )
 
@@ -173,16 +181,24 @@ def study_detail(study_id):
     # 해당 번호의 스터디를 가져오고, 없으면 404 에러
     study = Study.query.get_or_404(study_id)
     
-    # 댓글 좋아요 여부를 확인하기 위해 '현재 로그인한 유저 정보(객체)'가 필요함
+    # [NEW] 댓글 좋아요 및 신청 상태 확인을 위해 '현재 로그인한 유저 정보' 필요
     current_user = None
+    applied_status = None # 신청 상태 (None: 안함, 0: 대기, 1: 수락)
+
     if 'user_id' in session:
         current_user = User.query.filter_by(userid=session['user_id']).first()
+        
+        # [NEW] 내가 이 스터디에 신청서를 냈는지 확인
+        enroll = Enrollment.query.filter_by(user_id=current_user.id, study_id=study.id).first()
+        if enroll:
+            applied_status = enroll.status
 
     return render_template(
         'study_detail.html',
         study=study,
         user_nickname=session.get('user_nickname'),
-        current_user=current_user # 이걸 HTML로 넘겨줘야 좋아요 눌렀는지 확인 가능!
+        current_user=current_user, # 좋아요 확인용
+        applied_status=applied_status # 신청 상태 확인용
     )
 
 # 9. 스터디 삭제 기능
@@ -199,7 +215,7 @@ def study_delete(study_id):
 
     return redirect(url_for('study'))
 
-# 10. 스터디 수정 기능
+# 10. 스터디 수정 기능 (채팅 링크 수정 포함!)
 @app.route('/study/<int:study_id>/edit', methods=['GET', 'POST'])
 def study_edit(study_id):
     study = Study.query.get_or_404(study_id)
@@ -214,6 +230,9 @@ def study_edit(study_id):
         study.category = request.form['category']
         study.member_count = request.form['member_count']
         study.content = request.form['content']
+        
+        # [NEW] 채팅방 링크도 수정 반영! (중요)
+        study.chat_link = request.form.get('chat_link')
 
         db.session.commit()
         return redirect(url_for('study_detail', study_id=study.id))
@@ -283,7 +302,7 @@ def comment_delete(comment_id):
 
     return redirect(url_for('study_detail', study_id=study_id))
 
-# 14. [변경됨] 댓글 좋아요 토글 기능
+# 14. 댓글 좋아요 토글 기능 (comment_like)
 @app.route('/comment/like/<int:comment_id>')
 def comment_like(comment_id):
     # 로그인 체크
@@ -307,6 +326,105 @@ def comment_like(comment_id):
 
     # 댓글이 달린 스터디 페이지로 다시 돌아감
     return redirect(url_for('study_detail', study_id=comment.study_id))
+
+# 15. 스터디 신청하기 (버튼 클릭 시 실행)
+@app.route('/study/apply/<int:study_id>')
+def study_apply(study_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user = User.query.filter_by(userid=session['user_id']).first()
+    study = Study.query.get_or_404(study_id)
+
+    # 본인 글에는 신청 못함
+    if study.writer == user.nickname:
+        return "본인 글에는 신청할 수 없습니다. (나중에 알림창으로 변경 가능)"
+
+    # 이미 신청했는지 확인
+    existing_apply = Enrollment.query.filter_by(user_id=user.id, study_id=study_id).first()
+    if existing_apply:
+        return "이미 신청했습니다."
+
+    # 신청서 작성 (상태: 0 대기중)
+    apply = Enrollment(user_id=user.id, study_id=study_id)
+    db.session.add(apply)
+    db.session.commit()
+
+    return redirect(url_for('study_detail', study_id=study_id))
+
+# --- app.py (기존 코드 아래에 추가) ---
+
+# 16. [NEW] 통합 마이페이지 (기존 my_posts 대체)
+@app.route('/mypage')
+def mypage():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user = User.query.filter_by(userid=session['user_id']).first()
+    
+    # 1. 내가 만든 스터디 (최신순)
+    my_studies = Study.query.filter_by(writer=user.nickname).order_by(Study.date.desc()).all()
+    
+    # 2. 내가 신청한 스터디 (최신순) - Enrollment 테이블에서 가져옴
+    my_enrollments = Enrollment.query.filter_by(user_id=user.id).order_by(Enrollment.date.desc()).all()
+
+    return render_template('mypage.html', 
+                            user=user, 
+                            my_studies=my_studies, 
+                            my_enrollments=my_enrollments)
+
+# 17. [NEW] 프로필 수정 기능 (한줄 소개)
+@app.route('/update_profile', methods=['POST'])
+def update_profile():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+        
+    user = User.query.filter_by(userid=session['user_id']).first()
+    
+    # 폼에서 보낸 bio 내용으로 업데이트
+    new_bio = request.form.get('bio')
+    user.bio = new_bio
+    
+    db.session.commit()
+    return redirect(url_for('mypage'))
+
+# 18. [NEW] 공개 프로필 페이지
+@app.route('/profile/<nickname>')
+def profile(nickname):
+    # 닉네임으로 유저 찾기
+    user = User.query.filter_by(nickname=nickname).first()
+    
+    if not user:
+        return "존재하지 않는 사용자입니다."
+        
+    # 이 사람이 모집 중인 스터디도 보여주자!
+    user_studies = Study.query.filter_by(writer=nickname).order_by(Study.date.desc()).all()
+    
+    return render_template('profile.html', target_user=user, studies=user_studies)
+
+# 19. 신청자 승인/거절 처리 (방장 권한)
+@app.route('/enrollment/<int:enrollment_id>/<action>')
+def enrollment_action(enrollment_id, action):
+    # action은 'accept' 또는 'reject'
+    
+    enrollment = Enrollment.query.get_or_404(enrollment_id)
+    study = enrollment.study # 연결된 스터디 정보 가져오기
+    
+    # 현재 로그인한 사람이 방장이 맞는지 확인
+    if session.get('user_nickname') != study.writer:
+        return "권한이 없습니다."
+        
+    if action == 'accept':
+        enrollment.status = 1 # 승인
+    elif action == 'reject':
+        enrollment.status = 2 # 거절
+    else:
+        return "잘못된 요청입니다."
+        
+    db.session.commit()
+    
+    # 처리가 끝나면 다시 마이페이지로 돌아가기
+    return redirect(url_for('mypage'))
 
 # 서버 실행
 if __name__ == '__main__':

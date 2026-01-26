@@ -27,7 +27,7 @@
                     </button>
 
                     <div class="dropdown-menu" id="dropdownMenu">
-                        <a href="#">마이페이지</a>
+                        <a href="{{ url_for('mypage') }}">마이페이지</a>
                         <a href="{{ url_for('my_posts') }}">내가 쓴 글</a>
                         <hr>
                         <a href="{{ url_for('logout') }}">로그아웃</a>

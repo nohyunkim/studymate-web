@@ -26,66 +26,72 @@
             <div class="input-group">
                 <label>카테고리</label>
                 <select name="category" required>
+                            <optgroup label="취업 / 커리어">
+                                <option>취업 준비</option>
+                                <option>자소서 / 포트폴리오</option>
+                                <option>면접 준비</option>
+                                <option>공기업 / 공시</option>
+                            </optgroup>
 
-                    <optgroup label="취업 / 커리어">
-                        <option value="취업 준비" {% if study.category == '취업 준비' %}selected{% endif %}>취업 준비</option>
-                        <option value="자소서 / 포트폴리오" {% if study.category == '자소서 / 포트폴리오' %}selected{% endif %}>자소서 / 포트폴리오</option>
-                        <option value="면접 준비" {% if study.category == '면접 준비' %}selected{% endif %}>면접 준비</option>
-                        <option value="공기업 / 공시" {% if study.category == '공기업 / 공시' %}selected{% endif %}>공기업 / 공시</option>
-                    </optgroup>
+                            <optgroup label="자격증">
+                                <option>컴퓨터활용능력</option>
+                                <option>한국사능력검정</option>
+                                <option>토익 / 토플</option>
+                                <option>한국어능력시험</option>
+                                <option>정보처리기사</option>
+                                <option>기타 자격증</option>
+                            </optgroup>
 
-                    <optgroup label="자격증">
-                        <option value="컴퓨터활용능력" {% if study.category == '컴퓨터활용능력' %}selected{% endif %}>컴퓨터활용능력</option>
-                        <option value="한국사능력검정" {% if study.category == '한국사능력검정' %}selected{% endif %}>한국사능력검정</option>
-                        <option value="토익 / 토플" {% if study.category == '토익 / 토플' %}selected{% endif %}>토익 / 토플</option>
-                        <option value="한국어능력시험" {% if study.category == '한국어능력시험' %}selected{% endif %}>한국어능력시험</option>
-                        <option value="정보처리기사" {% if study.category == '정보처리기사' %}selected{% endif %}>정보처리기사</option>
-                        <option value="기타 자격증" {% if study.category == '기타 자격증' %}selected{% endif %}>기타 자격증</option>
-                    </optgroup>
+                            <optgroup label="어학 / 외국어">
+                                <option>영어 회화</option>
+                                <option>토익 / 토플</option>
+                                <option>오픽 / 스피킹</option>
+                                <option>일본어</option>
+                                <option>중국어</option>
+                                <option>기타 외국어</option>
+                            </optgroup>
 
-                    <optgroup label="어학 / 외국어">
-                        <option value="영어 회화" {% if study.category == '영어 회화' %}selected{% endif %}>영어 회화</option>
-                        <option value="오픽 / 스피킹" {% if study.category == '오픽 / 스피킹' %}selected{% endif %}>오픽 / 스피킹</option>
-                        <option value="일본어" {% if study.category == '일본어' %}selected{% endif %}>일본어</option>
-                        <option value="중국어" {% if study.category == '중국어' %}selected{% endif %}>중국어</option>
-                        <option value="기타 외국어" {% if study.category == '기타 외국어' %}selected{% endif %}>기타 외국어</option>
-                    </optgroup>
+                            <optgroup label="습관 / 자기관리">
+                                <option>공부 인증</option>
+                                <option>루틴 관리</option>
+                                <option>아침형 인간</option>
+                                <option>운동 인증</option>
+                                <option>식단 관리</option>
+                            </optgroup>
 
-                    <optgroup label="습관 / 자기관리">
-                        <option value="공부 인증" {% if study.category == '공부 인증' %}selected{% endif %}>공부 인증</option>
-                        <option value="루틴 관리" {% if study.category == '루틴 관리' %}selected{% endif %}>루틴 관리</option>
-                        <option value="아침형 인간" {% if study.category == '아침형 인간' %}selected{% endif %}>아침형 인간</option>
-                        <option value="운동 인증" {% if study.category == '운동 인증' %}selected{% endif %}>운동 인증</option>
-                        <option value="식단 관리" {% if study.category == '식단 관리' %}selected{% endif %}>식단 관리</option>
-                    </optgroup>
+                            <optgroup label="IT / 개발">
+                                <option>웹 개발</option>
+                                <option>앱 개발</option>
+                                <option>알고리즘 / 코딩테스트</option>
+                                <option>데이터 분석</option>
+                                <option>AI / 머신러닝</option>
+                                <option>보안 / 해킹</option>
+                            </optgroup>
 
-                    <optgroup label="IT / 개발">
-                        <option value="웹 개발" {% if study.category == '웹 개발' %}selected{% endif %}>웹 개발</option>
-                        <option value="앱 개발" {% if study.category == '앱 개발' %}selected{% endif %}>앱 개발</option>
-                        <option value="알고리즘 / 코딩테스트" {% if study.category == '알고리즘 / 코딩테스트' %}selected{% endif %}>알고리즘 / 코딩테스트</option>
-                        <option value="데이터 분석" {% if study.category == '데이터 분석' %}selected{% endif %}>데이터 분석</option>
-                        <option value="AI / 머신러닝" {% if study.category == 'AI / 머신러닝' %}selected{% endif %}>AI / 머신러닝</option>
-                        <option value="보안 / 해킹" {% if study.category == '보안 / 해킹' %}selected{% endif %}>보안 / 해킹</option>
-                    </optgroup>
+                            <optgroup label="취미 / 기타">
+                                <option>독서</option>
+                                <option>헬스 / 운동</option>
+                                <option>러닝 / 마라톤</option>
+                                <option>요가 / 스트레칭</option>
+                                <option>악기 연습</option>
+                                <option>그림 / 드로잉</option>
+                                <option>사진 / 영상</option>
+                                <option>재테크 공부</option>
+                                <option>기타</option>
+                            </optgroup>
+                        </select>
+                    </div>
 
-                    <optgroup label="취미 / 기타">
-                        <option value="독서" {% if study.category == '독서' %}selected{% endif %}>독서</option>
-                        <option value="헬스 / 운동" {% if study.category == '헬스 / 운동' %}selected{% endif %}>헬스 / 운동</option>
-                        <option value="러닝 / 마라톤" {% if study.category == '러닝 / 마라톤' %}selected{% endif %}>러닝 / 마라톤</option>
-                        <option value="요가 / 스트레칭" {% if study.category == '요가 / 스트레칭' %}selected{% endif %}>요가 / 스트레칭</option>
-                        <option value="악기 연습" {% if study.category == '악기 연습' %}selected{% endif %}>악기 연습</option>
-                        <option value="그림 / 드로잉" {% if study.category == '그림 / 드로잉' %}selected{% endif %}>그림 / 드로잉</option>
-                        <option value="사진 / 영상" {% if study.category == '사진 / 영상' %}selected{% endif %}>사진 / 영상</option>
-                        <option value="재테크 공부" {% if study.category == '재테크 공부' %}selected{% endif %}>재테크 공부</option>
-                        <option value="기타" {% if study.category == '기타' %}selected{% endif %}>기타</option>
-                    </optgroup>
-
-                </select>
-            </div>
-
-            <div class="input-group">
-                <label>모집 인원</label>
-                <input type="number" name="member_count" value="{{ study.member_count }}" required>
+            <div style="display: flex; gap: 20px;">
+                <div class="input-group" style="flex: 1;">
+                    <label>모집 인원</label>
+                    <input type="number" name="member_count" value="{{ study.member_count }}" required>
+                </div>
+                
+                <div class="input-group" style="flex: 1;">
+                    <label>오픈채팅방 링크 (선택)</label>
+                    <input type="text" name="chat_link" value="{{ study.chat_link if study.chat_link else '' }}" placeholder="https://open.kakao.com/...">
+                </div>
             </div>
 
             <div class="input-group">
