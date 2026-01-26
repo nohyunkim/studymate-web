@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>내가 쓴 글 - 스터디 메이트</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header>
+    <div class="nav-container">
+        <a href="{{ url_for('index') }}" class="logo">STUDY MATE</a>
+        <nav class="nav-menu">
+            <a href="{{ url_for('index') }}">홈</a>
+            <a href="{{ url_for('study') }}">스터디 찾기</a>
+            <a href="javascript:history.back()">⬅ 뒤로가기</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section>
+        <h2 style="text-align: center;">📂 내가 모집 중인 스터디</h2>
+        
+        <div class="study-list" style="margin-top: 30px;">
+            {% for study in studies %}
+            <a href="{{ url_for('study_detail', study_id=study.id) }}" style="color: inherit;">
+                <article class="card">
+                    <h3>{{ study.title }}</h3>
+                    <p style="color: #666; font-size: 14px; margin-bottom: 10px;">
+                        {{ study.content[:50] }}...
+                    </p>
+                    <span class="tag">{{ study.category }}</span>
+                    <span class="tag">👥 {{ study.member_count }}명</span>
+                </article>
+            </a>
+            {% endfor %}
+
+            {% if studies|length == 0 %}
+                <div style="width: 100%; text-align: center; padding: 50px; color: #888;">
+                    <p>아직 작성한 글이 없습니다. 😅</p>
+                    <a href="{{ url_for('studywrite') }}" class="primary-btn" style="display:inline-block; width:auto; margin-top:10px;">
+                        첫 스터디 모집하기
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>© 2026 Study Mate. Designed by 김노현</p>
+</footer>
+
+</body>
+</html>

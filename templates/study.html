@@ -25,7 +25,7 @@
 
                     <div class="dropdown-menu" id="dropdownMenu">
                         <a href="#">마이페이지</a>
-                        <a href="#">내가 쓴 글</a>
+                        <a href="{{ url_for('my_posts') }}">내가 쓴 글</a>
                         <hr>
                         <a href="{{ url_for('logout') }}">로그아웃</a>
                     </div>
@@ -42,15 +42,18 @@
         <section style="text-align: center;">
             <h2>🔍 원하는 스터디를 찾아보세요</h2>
             
-            <div class="search-box">
-                <input type="text" placeholder="스터디 주제나 지역을 검색해보세요" style="margin-bottom: 0;">
+            <form action="{{ url_for('study') }}" method="GET" class="search-box">
+                <input type="text" name="keyword" placeholder="스터디 제목을 검색해보세요" 
+                    value="{{ keyword if keyword else '' }}" style="margin-bottom: 0;">
+                    
+                <button type="submit" class="primary-btn" style="width: auto; padding: 12px 20px;">검색</button>
+
                 {% if user_nickname %}
                     <a href="{{ url_for('studywrite') }}" class="write-btn">모집하기 ✏️</a>
                 {% else %}
                     <a href="{{ url_for('login') }}" class="write-btn">로그인 후 모집하기 ✏️</a>
                 {% endif %}
-
-            </div>
+            </form>
         </section>
 
         <section>

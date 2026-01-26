@@ -115,19 +115,26 @@ def signup():
 
     return render_template('signup.html')
 
-# 6. 스터디 목록
+# 6. 스터디 목록 (검색 기능 추가됨)
 @app.route('/study')
 def study():
     page = request.args.get('page', 1, type=int)
+    keyword = request.args.get('keyword', type=str, default='') # 검색어 가져오기
 
-    pagination = Study.query.order_by(
-        Study.date.desc()
-    ).paginate(page=page, per_page=9)
+    # 기본 쿼리: 날짜 최신순
+    query = Study.query.order_by(Study.date.desc())
+
+    # 검색어가 있다면? 제목에 포함된 것만 필터링 (Study.title.contains)
+    if keyword:
+        query = query.filter(Study.title.contains(keyword))
+
+    pagination = query.paginate(page=page, per_page=9)
 
     return render_template(
         'study.html',
         pagination=pagination,
-        user_nickname=session.get('user_nickname')
+        user_nickname=session.get('user_nickname'),
+        keyword=keyword  # 검색어도 같이 템플릿으로 보내줍니다 (검색창 유지용)
     )
 
 # 7. 스터디 글쓰기
@@ -200,6 +207,23 @@ def study_edit(study_id):
         'study_edit.html',
         study=study,
         user_nickname=session.get('user_nickname')
+    )
+
+# 11. 내가 쓴 글 보기 (새로 추가됨)
+@app.route('/myposts')
+def my_posts():
+    if 'user_nickname' not in session:
+        return redirect(url_for('login')) # 로그인 안했으면 쫓아냄
+
+    nickname = session['user_nickname']
+    
+    # 작성자가 '나'인 글만 찾아서 가져옴 (최신순)
+    my_studies = Study.query.filter_by(writer=nickname).order_by(Study.date.desc()).all()
+
+    return render_template(
+        'myposts.html', # 새로운 HTML 파일
+        studies=my_studies,
+        user_nickname=nickname
     )
 
 # 서버 실행
