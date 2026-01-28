@@ -55,16 +55,16 @@ class Study(db.Model):
     __tablename__ = 'study'
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(200), nullable=False)    # 제목
-    category = db.Column(db.String(50), nullable=False)  # 카테고리
-    member_count = db.Column(db.Integer, nullable=False) # 모집인원
-    content = db.Column(db.Text, nullable=False)         # 상세내용
-    date = db.Column(db.DateTime, default=get_kst_now)   # 작성시간(한국시간)
-
+    title = db.Column(db.String(200), nullable=False)
+    category = db.Column(db.String(50), nullable=False)
+    member_count = db.Column(db.Integer, nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    date = db.Column(db.DateTime, default=get_kst_now)
     writer = db.Column(db.String(50), nullable=False)
-
-    # 오픈채팅방 링크 (없을 수도 있으니까 nullable=True)
     chat_link = db.Column(db.String(300), nullable=True)
+
+    # 모집 마감 여부 (False: 모집중, True: 마감)
+    is_closed = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return f'<Study {self.title}>'

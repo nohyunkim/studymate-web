@@ -22,7 +22,10 @@
     <section class="profile-section">
         <div class="profile-icon">👤</div>
         <h2>{{ user.nickname }}님, 안녕하세요!</h2>
-        <p style="color:#666; font-size:14px; margin-bottom:20px;">{{ user.email }}</p>
+        <p class="text-muted">
+            {{ user.email }}
+        </p>
+
 
         <div id="bio-display">
             <div class="bio-text">
@@ -35,7 +38,9 @@
             <button onclick="toggleBioEdit()" class="small-text-btn">✏️ 한줄 소개 수정하기</button>
         </div>
 
-        <form id="bio-form" action="{{ url_for('update_profile') }}" method="POST" style="display: none;">
+        <form id="bio-form" class="hidden"
+            action="{{ url_for('update_profile') }}"
+            method="POST">
             <div class="input-wrapper">
                 <textarea name="bio" id="bio-input" class="bio-input" rows="2" maxlength="50"
                     placeholder="나를 표현하는 한마디 (50자 이내)">{{ user.bio if user.bio else '' }}</textarea>
@@ -61,7 +66,7 @@
                     <h3>{{ study.title }}</h3>
                     <span class="tag">{{ study.category }}</span>
                     <span class="tag">👥 {{ study.member_count }}명 모집</span>
-                    <hr style="margin: 15px 0; border:0; border-top:1px solid #eee;">
+                    <hr class="divider-line">
                     
                     <h4 style="margin: 10px 0;">📬 신청자 관리 ({{ study.enrollments|length }})</h4>
                 </div>
@@ -84,9 +89,9 @@
                                 <div class="applicant-actions">
                                     {% if enroll.status == 0 %}
                                         <a href="{{ url_for('enrollment_action', enrollment_id=enroll.id, action='accept') }}" 
-                                           class="small-btn" style="background:#28a745; color:white; text-decoration:none; padding:5px 10px; border-radius:4px;">승인</a>
+                                            class="small-btn" style="background:#28a745; color:white; text-decoration:none; padding:5px 10px; border-radius:4px;">승인</a>
                                         <a href="{{ url_for('enrollment_action', enrollment_id=enroll.id, action='reject') }}" 
-                                           class="small-btn" style="background:#dc3545; color:white; text-decoration:none; padding:5px 10px; border-radius:4px;">거절</a>
+                                            class="small-btn" style="background:#dc3545; color:white; text-decoration:none; padding:5px 10px; border-radius:4px;">거절</a>
                                     {% elif enroll.status == 1 %}
                                         <span class="status-badge status-1">승인됨</span>
                                     {% else %}

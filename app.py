@@ -255,7 +255,7 @@ def my_posts():
     my_studies = Study.query.filter_by(writer=nickname).order_by(Study.date.desc()).all()
 
     return render_template(
-        'myposts.html', # myposts.html 파일이 있어야 함
+        'mypost.html', # myposts.html 파일이 있어야 함
         studies=my_studies,
         user_nickname=nickname
     )
@@ -425,6 +425,27 @@ def enrollment_action(enrollment_id, action):
     
     # 처리가 끝나면 다시 마이페이지로 돌아가기
     return redirect(url_for('mypage'))
+
+# 모집 마감/재오픈 토글 기능 (app.py 맨 아래쪽에 추가)
+@app.route('/study/<int:study_id>/toggle_close')
+def study_toggle_close(study_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    study = Study.query.get_or_404(study_id)
+
+    # 방장인지 확인 (방장만 마감 가능)
+    if study.writer != session.get('user_nickname'):
+        return "권한이 없습니다."
+
+    # 스위치 켜고 끄기 (True <-> False 뒤집기)
+    if study.is_closed:
+        study.is_closed = False # 다시 열기
+    else:
+        study.is_closed = True  # 마감하기
+
+    db.session.commit()
+    return redirect(url_for('study_detail', study_id=study_id))
 
 # 서버 실행
 if __name__ == '__main__':

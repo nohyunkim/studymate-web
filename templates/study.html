@@ -40,7 +40,7 @@
 
     <main>
         <section style="text-align: center;">
-            <h2>🔍 원하는 스터디를 찾아보세요</h2>
+            <h2 class="section-title">🔍 원하는 스터디를 찾아보세요</h2>
             
             <form action="{{ url_for('study') }}" method="GET" class="search-box">
                 <input type="text" name="keyword" placeholder="스터디 제목을 검색해보세요" 
@@ -83,7 +83,7 @@
                 {% endfor %}
 
                 {% if pagination.total == 0 %}
-                    <p style="width: 100%; text-align: center; padding: 50px; color: #888;">
+                    <p class="empty-message">
                         아직 등록된 스터디가 없습니다. 첫 번째 주인공이 되어보세요! 😎
                     </p>
                 {% endif %}

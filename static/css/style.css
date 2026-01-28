@@ -819,3 +819,33 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 @media (max-width: 600px) {
     .study-list { grid-template-columns: 1fr; }
 }
+
+.text-muted {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+.divider-line {
+    margin: 15px 0;
+    border: 0;
+    border-top: 1px solid #eee;
+}
+
+/* 안내 문구: 가로 전체(3칸) 차지하게 하기 */
+.empty-message {
+    width: 100%;
+    text-align: center;
+    padding: 50px;
+    color: #888;
+    grid-column: 1 / -1; /* 1번 기둥부터 끝까지 꽉 채우는 거 */
+}
+
+/* 2. 글자 크기만큼만 차지하게 하기 */
+.section-title {
+    display: inline-block;
+}

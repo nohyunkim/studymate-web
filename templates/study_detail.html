@@ -76,8 +76,27 @@
             <div style="margin: 40px 0; text-align: center;">
                 
                 {% if user_nickname == study.writer %}
-                    {% elif not user_nickname %}
+                    <div style="margin-bottom: 20px;">
+                        <a href="{{ url_for('study_toggle_close', study_id=study.id) }}" 
+                            class="primary-btn" 
+                            style="background-color: #6c757d; width: auto; padding: 10px 20px;">
+                            {% if study.is_closed %}
+                                🔓 모집 다시 열기
+                            {% else %}
+                                ⛔ 모집 마감하기
+                            {% endif %}
+                        </a>
+                    </div>
+                {% endif %}
+
+                {% if study.is_closed %}
+                    <button class="primary-btn" style="background:#ccc; cursor:not-allowed; width:auto;">⛔ 모집이 마감되었습니다</button>
+                
+                {% elif not user_nickname %}
                     <a href="{{ url_for('login') }}" class="primary-btn" style="width:auto;">로그인 후 신청하기</a>
+
+                {% elif user_nickname == study.writer %}
+                    <p style="color:#007bff; font-weight:bold;">내가 만든 스터디입니다 😎</p>
 
                 {% elif applied_status == None %}
                     <a href="{{ url_for('study_apply', study_id=study.id) }}" class="primary-btn" style="width:auto;" onclick="return confirm('스터디에 신청하시겠습니까?')">🚀 스터디 신청하기</a>
@@ -142,8 +161,8 @@
                                 
                                 <div class="comment-actions" style="display:flex; align-items:center;">
                                     <a href="{{ url_for('comment_like', comment_id=comment.id) }}" 
-                                       class="comment-like-btn {% if current_user in comment.likers %}liked{% endif %}"
-                                       style="text-decoration:none;">
+                                        class="comment-like-btn {% if current_user in comment.likers %}liked{% endif %}"
+                                        style="text-decoration:none;">
                                         {% if current_user in comment.likers %}♥{% else %}♡{% endif %}
                                         {{ comment.likers|length }}
                                     </a>
@@ -152,7 +171,7 @@
                                     
                                     {% if user_nickname == comment.writer %}
                                     <a href="{{ url_for('comment_delete', comment_id=comment.id) }}" 
-                                       class="delete-text-btn" onclick="return confirm('삭제하시겠습니까?')">삭제</a>
+                                        class="delete-text-btn" onclick="return confirm('삭제하시겠습니까?')">삭제</a>
                                     {% endif %}
                                 </div>
                             </div>
@@ -171,15 +190,15 @@
                                         
                                         <div class="comment-actions" style="display:flex; align-items:center;">
                                             <a href="{{ url_for('comment_like', comment_id=reply.id) }}" 
-                                               class="comment-like-btn {% if current_user in reply.likers %}liked{% endif %}"
-                                               style="text-decoration:none;">
+                                                class="comment-like-btn {% if current_user in reply.likers %}liked{% endif %}"
+                                                style="text-decoration:none;">
                                                 {% if current_user in reply.likers %}♥{% else %}♡{% endif %}
                                                 {{ reply.likers|length }}
                                             </a>
 
                                             {% if user_nickname == reply.writer %}
                                             <a href="{{ url_for('comment_delete', comment_id=reply.id) }}" 
-                                               class="delete-text-btn" onclick="return confirm('삭제할까요?')">삭제</a>
+                                                class="delete-text-btn" onclick="return confirm('삭제할까요?')">삭제</a>
                                             {% endif %}
                                         </div>
                                     </div>
