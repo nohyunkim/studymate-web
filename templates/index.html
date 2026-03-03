@@ -11,7 +11,6 @@
 
 <body>
 
-    <!-- 상단 네비게이션 바 -->
     <header>
         <div class="nav-container">
             <a href="{{ url_for('index') }}" class="logo">STUDY MATE</a>
@@ -42,7 +41,6 @@
 
 
     <main>
-        <!-- 서비스 소개 -->
         <section>
             <h2>👋 서비스 소개</h2>
             <p style="font-size: 18px; color: #555;">
@@ -51,9 +49,8 @@
             </p>
         </section>
 
-        <!-- 스터디 참여 -->
         <section>
-            <h2>🔥 스터디 참여하기</h2>
+            <h2>🔥 따끈따끈한 랜덤 추천 스터디</h2>
 
             <div class="study-list">
                 {% for study in random_studies %}
@@ -83,19 +80,14 @@
         </section>
 
 
-        <!-- 스터디 신청 -->
         <section>
-            <h2>📝 바로 신청하기</h2>
-            <form action="#" method="post">
+            <h2>🚀 나에게 딱 맞는 스터디 찾기</h2>
+            <form action="{{ url_for('study') }}" method="GET">
+                
                 <div class="input-group">
-                    <label>이름</label>
-                    <input type="text" placeholder="이름을 입력하세요">
-                </div>
-
-                <div class="input-group">
-                    <label>카테고리</label>
-                    <select>
-                        <option>선택해주세요</option>
+                    <label>관심있는 주제를 선택해보세요</label>
+                    <select name="category" required>
+                        <option value="">카테고리 선택</option>
 
                         <optgroup label="취업 / 커리어">
                             <option>취업 준비</option>
@@ -153,7 +145,7 @@
                     </select>
                 </div>
 
-                <button type="button" class="primary-btn">신청하기</button>
+                <button type="submit" class="primary-btn">🔍 스터디 찾아보기</button>
             </form>
         </section>
     </main>
@@ -178,7 +170,6 @@
             }
         });
     </script>
-
 
 </body>
 </html>
