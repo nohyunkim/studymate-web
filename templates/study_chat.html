@@ -60,9 +60,11 @@
     const composeInput = document.getElementById("chat-compose-input");
     const composeStatus = document.getElementById("chat-compose-status");
     const currentUserId = {{ user.id|tojson }};
-    const streamUrl = {{ url_for('study_chat_stream', study_id=study.id)|tojson }};
+    const streamUrl = {{ (chat_stream_url if chat_stream_url is defined else url_for('study_chat_stream', study_id=study.id))|tojson }};
+    const pollUrl = {{ (chat_poll_url if chat_poll_url is defined else '')|tojson }};
     const postUrl = {{ url_for('study_chat', study_id=study.id)|tojson }};
     const csrfToken = {{ csrf_token|tojson }};
+    let lastMessageId = {{ (messages[-1].id if messages else 0)|tojson }};
 
     function scrollChatToBottom() {
         if (messageStack) {
@@ -97,23 +99,60 @@
         article.appendChild(meta);
         article.appendChild(content);
         messageStack.appendChild(article);
+        lastMessageId = Math.max(lastMessageId, Number(message.id || 0));
         scrollChatToBottom();
+    }
+
+    async function pollMessages() {
+        if (!pollUrl) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${pollUrl}?after_id=${encodeURIComponent(lastMessageId)}`, {
+                headers: {
+                    "Accept": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("채팅을 새로고침하지 못했습니다.");
+            }
+
+            const data = await response.json();
+            if (data.ok && Array.isArray(data.messages)) {
+                data.messages.forEach(renderMessage);
+            }
+
+            if (composeStatus && composeStatus.textContent === "연결을 다시 확인하는 중입니다.") {
+                composeStatus.textContent = "";
+            }
+        } catch (error) {
+            if (composeStatus) {
+                composeStatus.textContent = "연결을 다시 확인하는 중입니다.";
+            }
+        }
     }
 
     if (messageStack) {
         scrollChatToBottom();
-        const eventSource = new EventSource(streamUrl);
+        if (streamUrl) {
+            const eventSource = new EventSource(streamUrl);
 
-        eventSource.onmessage = (event) => {
-            const payload = JSON.parse(event.data);
-            renderMessage(payload);
-        };
+            eventSource.onmessage = (event) => {
+                const payload = JSON.parse(event.data);
+                renderMessage(payload);
+            };
 
-        eventSource.onerror = () => {
-            if (composeStatus) {
-                composeStatus.textContent = "연결이 잠시 불안정합니다. 다시 연결 중입니다.";
-            }
-        };
+            eventSource.onerror = () => {
+                if (composeStatus) {
+                    composeStatus.textContent = "연결이 잠시 불안정합니다. 다시 연결 중입니다.";
+                }
+            };
+        } else if (pollUrl) {
+            pollMessages();
+            window.setInterval(pollMessages, 3000);
+        }
     }
 
     if (composeForm) {
@@ -144,6 +183,9 @@
 
                 composeInput.value = "";
                 composeStatus.textContent = "";
+                if (!streamUrl && data.message) {
+                    renderMessage(data.message);
+                }
             } catch (error) {
                 composeStatus.textContent = error.message;
             } finally {

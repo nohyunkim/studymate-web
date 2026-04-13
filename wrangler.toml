@@ -1,0 +1,14 @@
+name = "studymate-web"
+main = "cf_worker.py"
+compatibility_date = "2026-04-13"
+compatibility_flags = ["python_workers"]
+
+[assets]
+directory = "./static"
+binding = "ASSETS"
+run_worker_first = ["/", "/login", "/logout", "/check-userid", "/signup", "/study*", "/mypage", "/myposts", "/comment*", "/chats", "/update_profile", "/profile*", "/enrollment*"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "studymate-db"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
