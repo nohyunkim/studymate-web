@@ -4,7 +4,6 @@
 {% block body_class %}home-page{% endblock %}
 
 {% block content %}
-<!-- ────── HERO ────── -->
 <section class="h-hero">
     <div class="h-hero-text">
         <span class="h-kicker">스터디메이트</span>
@@ -28,11 +27,10 @@
         </div>
     </div>
     <div class="h-hero-visual">
-        <img src="{{ url_for('static', filename='images/hero-study-scene.svg') }}" alt="스터디 일러스트" class="h-hero-img" width="960" height="760"/>
+        <img src="{{ url_for('static', filename='images/hero-study-scene.svg') }}" alt="스터디 일러스트" class="h-hero-img" width="960" height="760" />
     </div>
 </section>
 
-<!-- ────── STATS BAND ────── -->
 <section class="h-stats">
     <article class="h-stat-card h-stat-violet">
         <strong>{{ random_studies|length }}+</strong>
@@ -48,7 +46,6 @@
     </article>
 </section>
 
-<!-- ────── 추천 스터디 ────── -->
 <section class="h-picks">
     <div class="h-picks-header">
         <div>
@@ -74,10 +71,9 @@
     </div>
 </section>
 
-<!-- ────── FEATURE 1 : 모집 ────── -->
 <section class="h-feature">
     <div class="h-feature-img">
-        <img src="{{ url_for('static', filename='images/feature-recruit.svg') }}" alt="스터디 모집 일러스트" width="640" height="480"/>
+        <img src="{{ url_for('static', filename='images/feature-recruit.svg') }}" alt="스터디 모집 일러스트" width="640" height="480" />
     </div>
     <div class="h-feature-text">
         <span class="h-kicker">구조화된 모집</span>
@@ -88,10 +84,9 @@
     </div>
 </section>
 
-<!-- ────── FEATURE 2 : 승인 ────── -->
 <section class="h-feature h-feature-reverse">
     <div class="h-feature-img">
-        <img src="{{ url_for('static', filename='images/feature-flow.svg') }}" alt="승인 흐름 일러스트" width="840" height="560"/>
+        <img src="{{ url_for('static', filename='images/feature-flow.svg') }}" alt="승인 흐름 일러스트" width="840" height="560" />
     </div>
     <div class="h-feature-text">
         <span class="h-kicker">상태 기반 승인</span>
@@ -102,10 +97,9 @@
     </div>
 </section>
 
-<!-- ────── FEATURE 3 : 채팅 ────── -->
 <section class="h-feature">
     <div class="h-feature-img">
-        <img src="{{ url_for('static', filename='images/feature-chat-room.svg') }}" alt="채팅 일러스트" width="640" height="480"/>
+        <img src="{{ url_for('static', filename='images/feature-chat-room.svg') }}" alt="채팅 일러스트" width="640" height="480" />
     </div>
     <div class="h-feature-text">
         <span class="h-kicker">멤버 전용 채팅</span>
@@ -120,37 +114,40 @@
     </div>
 </section>
 
-<!-- ────── 카테고리 ────── -->
 <section class="h-categories">
-    <div class="h-categories-top">
-        <div>
+    <div class="h-categories-layout">
+        <div class="h-categories-content">
             <span class="h-kicker">카테고리</span>
             <h2>원하는 주제를 바로 탐색하세요</h2>
-            <p class="h-categories-copy">스터디 찾기에서 보던 전체 카테고리 구조를 그대로 가져왔습니다. 관심 있는 그룹만 펼쳐서 빠르게 들어갈 수 있습니다.</p>
-        </div>
-        <img src="{{ url_for('static', filename='images/feature-category.svg') }}" alt="카테고리 일러스트" class="h-categories-illust" width="640" height="480"/>
-    </div>
-    <div class="h-category-accordion" aria-label="스터디 카테고리 목록">
-        {% for group, options in study_categories %}
-            <details class="h-category-group" {% if loop.first %}open{% endif %}>
-                <summary>
-                    <span>{{ group }}</span>
-                    <strong>{{ options|length }}개</strong>
-                </summary>
-                <div class="h-category-links">
-                    {% for option in options %}
-                        <a href="{{ url_for('study', category=option) }}" class="h-category-link">{{ option }}</a>
-                    {% endfor %}
+            <p class="h-categories-copy">스터디 찾기와 같은 방식으로 원하는 주제를 바로 골라 들어갈 수 있습니다.</p>
+            <form action="{{ url_for('study') }}" method="GET" class="h-category-form">
+                <div class="input-group h-category-input-group">
+                    <label for="home-category-select">카테고리</label>
+                    <select id="home-category-select" name="category" class="h-category-select">
+                        <option value="">전체 카테고리</option>
+                        {% for group, options in study_categories %}
+                            <optgroup label="{{ group }}">
+                                {% for option in options %}
+                                    <option value="{{ option }}">{{ option }}</option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
+                    </select>
                 </div>
-            </details>
-        {% endfor %}
+                <noscript>
+                    <button type="submit" class="h-btn-primary h-category-submit">선택한 카테고리 보기</button>
+                </noscript>
+            </form>
+        </div>
+        <div class="h-categories-visual">
+            <img src="{{ url_for('static', filename='images/feature-category.svg') }}" alt="카테고리 일러스트" class="h-categories-illust" width="640" height="480" />
+        </div>
     </div>
 </section>
 
-<!-- ────── CTA ────── -->
 <section class="h-cta">
     <div class="h-cta-content">
-        <img src="{{ url_for('static', filename='images/cta-community.svg') }}" alt="커뮤니티 일러스트" class="h-cta-img" width="480" height="400"/>
+        <img src="{{ url_for('static', filename='images/cta-community.svg') }}" alt="커뮤니티 일러스트" class="h-cta-img" width="480" height="400" />
         <div class="h-cta-text">
             <h2>스터디를 찾고, 팀을 만들고,<br>끝까지 완주하세요.</h2>
             <div class="h-hero-btns">
@@ -164,4 +161,20 @@
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const homeCategorySelect = document.getElementById('home-category-select');
+
+    if (homeCategorySelect) {
+        homeCategorySelect.addEventListener('change', function () {
+            const nextUrl = this.value
+                ? `{{ url_for('study') }}?category=${encodeURIComponent(this.value)}`
+                : `{{ url_for('study') }}`;
+
+            window.location.href = nextUrl;
+        });
+    }
+</script>
 {% endblock %}
