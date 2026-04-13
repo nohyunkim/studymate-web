@@ -1,0 +1,282 @@
+﻿.chat-shell,
+.chat-room-list {
+    display: grid;
+    gap: 20px;
+}
+
+.chat-header-card,
+.chat-room-card,
+.chat-room-panel {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(228, 232, 240, 0.9);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.chat-header-card,
+.chat-room-card,
+.chat-room-panel {
+    padding: 24px;
+}
+
+.chat-header-card,
+.chat-room-card-top,
+.chat-header-actions,
+.chat-compose-actions,
+.owner-chat-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.chat-room-preview {
+    margin-top: 16px;
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: var(--surface-muted);
+}
+
+.chat-room-preview p {
+    margin: 8px 0;
+    color: var(--text);
+}
+
+.chat-message-stack {
+    max-height: 62vh;
+    overflow-y: auto;
+    display: grid;
+    gap: 12px;
+    padding-right: 4px;
+}
+
+.chat-bubble {
+    max-width: min(82%, 640px);
+    padding: 14px 16px;
+    border-radius: 18px 18px 18px 8px;
+    background: #f4f7ff;
+    border: 1px solid #dbe5fb;
+}
+
+.chat-bubble.mine {
+    margin-left: auto;
+    background: #eaf1ff;
+    border-color: #bfd2ff;
+    border-radius: 18px 18px 8px 18px;
+}
+
+.chat-bubble-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.chat-bubble p {
+    margin-bottom: 0;
+    white-space: pre-wrap;
+}
+
+.chat-compose-form {
+    margin-top: 20px;
+    display: grid;
+    gap: 12px;
+}
+
+.chat-compose-form textarea {
+    min-height: 110px;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.subheading {
+    margin: 0 0 14px;
+}
+
+.applicant-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: var(--surface-muted);
+    margin-top: 12px;
+}
+
+.applicant-info a {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.applicant-bio {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+.status-badge {
+    padding: 6px 10px;
+}
+
+.status-0 {
+    background: var(--warning-bg);
+    color: var(--warning-text);
+}
+
+.status-1 {
+    background: var(--success-bg);
+    color: var(--success-text);
+}
+
+.status-2 {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+}
+
+.center-layout {
+    min-height: calc(100vh - 240px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.signup-layout {
+    align-items: flex-start;
+}
+
+.login-card {
+    width: min(100%, 460px);
+    padding: 34px 30px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+}
+
+.signup-card {
+    width: min(100%, 520px);
+}
+
+.auth-logo {
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.icon-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary);
+    font-size: 0.88rem;
+}
+
+.input-with-btn {
+    display: flex;
+    gap: 10px;
+}
+
+.input-with-btn input {
+    flex: 1;
+}
+
+.small-btn {
+    padding: 0 14px;
+}
+
+.agreement-box {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 16px;
+    border-radius: 14px;
+    background: var(--surface-muted);
+    border: 1px solid var(--line);
+}
+
+.agreement-box input {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+}
+
+.auth-footnote {
+    margin-bottom: 0;
+}
+
+.pagination {
+    margin-top: 28px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.pagination a,
+.pagination span {
+    min-width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text-muted);
+}
+
+.pagination a.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+}
+
+.empty-message {
+    grid-column: 1 / -1;
+    padding: 36px 20px;
+    text-align: center;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px dashed var(--line);
+    border-radius: 18px;
+}
+
+.dropdown-form,
+.inline-form {
+    display: inline;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.site-footer,
+footer {
+    padding: 28px 20px 48px;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.footer-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+}
+
+.footer-brand {
+    margin-bottom: 6px;
+    color: var(--text);
+    font-family: "Space Grotesk", "Noto Sans KR", sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+

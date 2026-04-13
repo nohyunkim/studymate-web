@@ -1,0 +1,201 @@
+﻿@media (max-width: 900px) {
+    .portfolio-hero,
+    .editorial-band,
+    .showcase-gallery,
+    .landing-hero,
+    .landing-features,
+    .home-strip,
+    .home-dashboard,
+    .editorial-grid,
+    .process-grid,
+    .category-columns,
+    .hero-section,
+    .study-list,
+    .form-columns,
+    .filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .showcase-gallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .feature-spotlight,
+    .feature-spotlight.reverse {
+        grid-template-columns: 1fr;
+    }
+
+    .feature-spotlight.reverse .feature-copy {
+        order: initial;
+    }
+
+    .landing-copy,
+    .hero-showcase {
+        min-height: auto;
+    }
+
+    .board-card-grid,
+    .dashboard-side,
+    .dashboard-step-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard-image-panel {
+        grid-column: 1 / -1;
+    }
+
+    .owner-grid {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 720px) {
+    .nav-container {
+        padding: 12px 16px;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .nav-menu {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 14px;
+    }
+
+    .auth-link-group {
+        width: fit-content;
+    }
+
+    main {
+        padding: 24px 16px 56px;
+    }
+
+    .portfolio-hero-copy h1,
+    .editorial-copy h2 {
+        max-width: none;
+    }
+
+    .showcase-gallery {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .gallery-overlay {
+        left: 20px;
+        right: 20px;
+        bottom: 22px;
+    }
+
+    .gallery-screen img {
+        aspect-ratio: 1 / 1.14;
+    }
+
+    .editorial-copy,
+    .editorial-panel {
+        padding: 24px;
+    }
+
+    .hero-copy,
+    .hero-panel,
+    .filter-panel,
+    .profile-section,
+    .profile-header,
+    .detail-header,
+    .owner-panel,
+    .card,
+    .comment-item,
+    .comment-form-box,
+    .login-card,
+    .landing-copy,
+    .hero-showcase,
+    .strip-item,
+    .dashboard-panel,
+    .board-feature-card,
+    .feature-card,
+    .process-card,
+    .category-column,
+    .feature-spotlight {
+        padding: 20px;
+    }
+
+    .hero-showcase,
+    .landing-copy {
+        min-height: auto;
+    }
+
+    .landing-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-showcase {
+        display: grid;
+        gap: 14px;
+    }
+
+    .hero-main-image {
+        width: 100%;
+        max-width: none;
+    }
+
+    .hero-summary-card {
+        position: relative;
+        left: auto;
+        bottom: auto;
+        width: 100%;
+        margin-top: 0;
+    }
+
+    .hero-showcase img {
+        aspect-ratio: 16 / 11;
+    }
+
+    .strip-item-visual {
+        padding: 0;
+    }
+
+    .strip-item-visual img {
+        min-height: 180px;
+    }
+
+    .board-card-grid,
+    .dashboard-side {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-step-card {
+        grid-template-columns: 1fr;
+    }
+
+    .section-heading {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .comment-header,
+    .applicant-item,
+    .reply-form,
+    .comment-form-box,
+    .input-with-btn,
+    .chat-header-card,
+    .chat-room-card-top,
+    .chat-header-actions,
+    .chat-compose-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .comment-actions {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .small-btn {
+        width: 100%;
+        padding: 12px 14px;
+    }
+
+    .chat-bubble {
+        max-width: 100%;
+    }
+}

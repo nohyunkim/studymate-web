@@ -1,56 +1,38 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>내가 쓴 글 - 스터디 메이트</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
 
-<header>
-    <div class="nav-container">
-        <a href="{{ url_for('index') }}" class="logo">STUDY MATE</a>
-        <nav class="nav-menu">
-            <a href="{{ url_for('index') }}">홈</a>
-            <a href="{{ url_for('study') }}">스터디 찾기</a>
-            <a href="javascript:history.back()">⬅ 뒤로가기</a>
-        </nav>
+{% block title %}내가 쓴 글 - 스터디 메이트{% endblock %}
+
+{% block content %}
+<section>
+    <div class="section-heading">
+        <h2>내가 만든 스터디</h2>
     </div>
-</header>
 
-<main>
-    <section>
-        <h2 style="text-align: center;">📂 내가 모집 중인 스터디</h2>
-        
-        <div class="study-list" style="margin-top: 30px;">
-            {% for study in studies %}
-            <a href="{{ url_for('study_detail', study_id=study.id) }}" style="color: inherit;">
+    <div class="study-list">
+        {% for study in studies %}
+            <a href="{{ url_for('study_detail', study_id=study.id) }}" class="card-link">
                 <article class="card">
-                    <h3>{{ study.title }}</h3>
-                    <p style="color: #666; font-size: 14px; margin-bottom: 10px;">
-                        {{ study.content[:50] }}...
-                    </p>
-                    <span class="tag">{{ study.category }}</span>
-                    <span class="tag">👥 {{ study.member_count }}명</span>
+                    <div class="card-top">
+                        <span class="card-status {% if study.is_closed %}closed{% endif %}">
+                            {% if study.is_closed %}모집 마감{% else %}모집 중{% endif %}
+                        </span>
+                        <h3>{{ study.title }}</h3>
+                        <p class="card-body">{{ study.content[:90] }}{% if study.content|length > 90 %}...{% endif %}</p>
+                    </div>
+                    <div class="card-meta">
+                        <span class="meta-line">📂 {{ study.category }}</span>
+                        <span class="meta-line">👥 {{ study.member_count }}명 정원</span>
+                    </div>
                 </article>
             </a>
-            {% endfor %}
+        {% endfor %}
 
-            {% if studies|length == 0 %}
-                <div style="width: 100%; text-align: center; padding: 50px; color: #888;">
-                    <p>아직 작성한 글이 없습니다. 😅</p>
-                    <a href="{{ url_for('studywrite') }}" class="primary-btn" style="display:inline-block; width:auto; margin-top:10px;">
-                        첫 스터디 모집하기
-                    </a>
-                </div>
-            {% endif %}
-        </div>
-    </section>
-</main>
-
-<footer>
-    <p>© 2026 Study Mate. Designed by 김노현</p>
-</footer>
-
-</body>
-</html>
+        {% if not studies %}
+            <div class="empty-message">
+                <p>아직 작성한 모집글이 없습니다.</p>
+                <a href="{{ url_for('studywrite') }}" class="primary-link">첫 스터디 모집하기</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

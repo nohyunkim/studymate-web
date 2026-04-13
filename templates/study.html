@@ -1,153 +1,101 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>스터디 찾기 - 스터디 메이트</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
 
-    <header>
-        <div class="nav-container">
-            <a href="{{ url_for('index') }}" class="logo">STUDY MATE</a>
+{% block title %}스터디 찾기 - 스터디 메이트{% endblock %}
 
-            <nav class="nav-menu">
-                <a href="{{ url_for('index') }}">홈</a>
-                <a href="{{ url_for('study') }}">스터디 찾기</a>
+{% block content %}
+<section>
+    <div class="section-heading">
+        <h2>원하는 스터디를 찾아보세요</h2>
+        {% if current_user %}
+            <a href="{{ url_for('studywrite') }}" class="primary-link compact-link">모집글 작성</a>
+        {% endif %}
+    </div>
 
-                {% if user_nickname %}
-                <div class="user-dropdown">
-                    <button class="user-btn" onclick="toggleDropdown()">
-                        {{ user_nickname }} <span class="arrow">▾</span>
-                    </button>
-
-                    <div class="dropdown-menu" id="dropdownMenu">
-                        <a href="{{ url_for('mypage') }}">마이페이지</a>
-                        <a href="{{ url_for('my_posts') }}">내가 쓴 글</a>
-                        <hr>
-                        <a href="{{ url_for('logout') }}">로그아웃</a>
-                    </div>
-                </div>
-                {% else %}
-                    <a href="{{ url_for('login') }}">로그인</a>
-                {% endif %}
-            </nav>
+    <form action="{{ url_for('study') }}" method="GET" class="filter-panel filter-grid">
+        <div class="input-group">
+            <label for="keyword">검색어</label>
+            <input id="keyword" type="text" name="keyword" value="{{ keyword }}" placeholder="제목이나 내용으로 검색">
         </div>
-    </header>
-
-
-    <main>
-        <section style="text-align: center;">
-            <h2 class="section-title">🔍 원하는 스터디를 찾아보세요</h2>
-            
-            <form action="{{ url_for('study') }}" method="GET" class="search-box">
-                <input type="text" name="keyword" placeholder="스터디 제목을 검색해보세요" 
-                    value="{{ keyword if keyword else '' }}" style="margin-bottom: 0;">
-                    
-                <button type="submit" class="primary-btn" style="width: auto; padding: 12px 20px;">검색</button>
-
-                {% if user_nickname %}
-                    <a href="{{ url_for('studywrite') }}" class="write-btn">모집하기 ✏️</a>
-                {% else %}
-                    <a href="{{ url_for('login') }}" class="write-btn">로그인 후 모집하기 ✏️</a>
-                {% endif %}
-            </form>
-
+        <div class="input-group">
+            <label for="category">카테고리</label>
+            <select id="category" name="category">
+                <option value="">전체 카테고리</option>
+                {% for group, options in study_categories %}
+                    <optgroup label="{{ group }}">
+                        {% for option in options %}
+                            <option value="{{ option }}" {% if option == category %}selected{% endif %}>{{ option }}</option>
+                        {% endfor %}
+                    </optgroup>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="filter-actions">
+            <button type="submit" class="primary-btn">검색</button>
             {% if keyword or category %}
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <a href="{{ url_for('study') }}" 
-                        style="background: #eee; padding: 8px 16px; border-radius: 20px; font-size: 13px; color: #555;">
-                        🔄 필터 초기화 (전체 보기)
-                    </a>
-                </div>
+                <a href="{{ url_for('study') }}" class="text-link">필터 초기화</a>
             {% endif %}
-        </section>
+        </div>
+    </form>
+</section>
 
-        <section>
-            <div class="study-list">
-                
-                {% for post in pagination.items %}
-                <a href="{{ url_for('study_detail', study_id=post.id) }}" style="color: inherit;">
-                    <article class="card">
+<section>
+    <div class="study-list">
+        {% for post in pagination.items %}
+            <a href="{{ url_for('study_detail', study_id=post.id) }}" class="card-link">
+                <article class="card">
+                    <div class="card-top">
+                        <span class="card-status {% if post.is_closed %}closed{% endif %}">
+                            {% if post.is_closed %}모집 마감{% else %}모집 중{% endif %}
+                        </span>
                         <h3>{{ post.title }}</h3>
-
-                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">
-                            {% if post.content|length > 50 %}
-                                {{ post.content[:50] }}...
+                        <p class="card-body">
+                            {% if post.content|length > 90 %}
+                                {{ post.content[:90] }}...
                             {% else %}
                                 {{ post.content }}
                             {% endif %}
                         </p>
+                    </div>
 
-                        <div style="font-size: 12px; color: #888; margin-bottom: 10px;">
-                            <span>👑 {{ post.writer }}</span> |
-                            <span>👥 {{ post.member_count }}명 모집</span>
-                        </div>
+                    <div class="card-meta">
+                        <span class="meta-line">👑 {{ post.writer }}</span>
+                        <span class="meta-line">👥 {{ post.member_count }}명 정원</span>
+                    </div>
 
-                        <object>
-                            <a href="{{ url_for('study', category=post.category) }}" class="tag">
-                                {{ post.category }}
-                            </a>
-                        </object>
-                    </article>
-                </a>
-                {% endfor %}
+                    <div class="tag-row">
+                        <span class="tag">{{ post.category }}</span>
+                    </div>
+                </article>
+            </a>
+        {% endfor %}
 
-                {% if pagination.total == 0 %}
-                    <p class="empty-message">
-                        아직 등록된 스터디가 없습니다. 첫 번째 주인공이 되어보세요! 😎
-                    </p>
-                {% endif %}
-            </div>
+        {% if pagination.total == 0 %}
+            <p class="empty-message">조건에 맞는 스터디가 아직 없습니다.</p>
+        {% endif %}
+    </div>
 
-            {% if pagination.total > 0 %}
-            <div class="pagination">
-                {% if pagination.has_prev %}
-                    <a href="?page={{ pagination.prev_num }}">&lt;</a>
-                {% endif %}
-
-                {% for page_num in pagination.iter_pages() %}
-                    {% if page_num %}
-                        {% if page_num == pagination.page %}
-                            <a href="#" class="active">{{ page_num }}</a> {% else %}
-                            <a href="?page={{ page_num }}">{{ page_num }}</a>
-                        {% endif %}
-                    {% else %}
-                        <span>...</span>
-                    {% endif %}
-                {% endfor %}
-
-                {% if pagination.has_next %}
-                    <a href="?page={{ pagination.next_num }}">&gt;</a>
-                {% endif %}
-            </div>
+    {% if pagination.total > 0 %}
+        <div class="pagination">
+            {% if pagination.has_prev %}
+                <a href="{{ url_for('study', page=pagination.prev_num, keyword=keyword, category=category) }}">&lt;</a>
             {% endif %}
 
-        </section>
-    </main>
+            {% for page_num in pagination.iter_pages() %}
+                {% if page_num %}
+                    {% if page_num == pagination.page %}
+                        <a href="#" class="active">{{ page_num }}</a>
+                    {% else %}
+                        <a href="{{ url_for('study', page=page_num, keyword=keyword, category=category) }}">{{ page_num }}</a>
+                    {% endif %}
+                {% else %}
+                    <span>...</span>
+                {% endif %}
+            {% endfor %}
 
-    <footer>
-        <p>© 2026 Study Mate. Designed by 김노현</p>
-    </footer>
-
-    <script>
-        function toggleDropdown() {
-            const menu = document.getElementById('dropdownMenu');
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        }
-
-        // 바깥 클릭 시 닫기
-        document.addEventListener('click', function (e) {
-            const dropdown = document.querySelector('.user-dropdown');
-            const menu = document.getElementById('dropdownMenu');
-
-            if (dropdown && !dropdown.contains(e.target)) {
-                menu.style.display = 'none';
-            }
-        });
-    </script>
-
-</body>
-</html>
+            {% if pagination.has_next %}
+                <a href="{{ url_for('study', page=pagination.next_num, keyword=keyword, category=category) }}">&gt;</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

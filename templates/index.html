@@ -1,175 +1,124 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>스터디 메이트 - 홈</title>
+{% extends "base.html" %}
 
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
+{% block title %}StudyMate | 오래 가는 스터디 플랫폼{% endblock %}
+{% block body_class %}home-page{% endblock %}
 
-<body>
+{% block content %}
+<section class="portfolio-hero">
+    <div class="portfolio-hero-copy">
+        <p class="portfolio-kicker">CURATED STUDY PLATFORM</p>
+        <h1>메인 화면부터<br>진짜 서비스처럼 보이는<br>스터디 플랫폼.</h1>
+        <p class="portfolio-lead">
+            게시판처럼 흩어지는 모집글이 아니라, 실제 웹서비스 첫 화면처럼
+            큰 화면과 정돈된 리듬 안에서 스터디를 탐색하고 바로 들어갈 수 있게 구성했습니다.
+        </p>
+    </div>
 
-    <header>
-        <div class="nav-container">
-            <a href="{{ url_for('index') }}" class="logo">STUDY MATE</a>
+    <div class="portfolio-hero-side">
+        <div class="hero-inline-metric">
+            <strong>{{ random_studies|length }}</strong>
+            <span>오늘 메인에 걸린 추천 스터디</span>
+        </div>
+        <div class="hero-inline-metric">
+            <strong>{{ study_categories|length }}</strong>
+            <span>탐색 가능한 카테고리 그룹</span>
+        </div>
+        <div class="portfolio-actions">
+            <a href="{{ url_for('study') }}" class="primary-link">스터디 둘러보기</a>
+            {% if current_user %}
+                <a href="{{ url_for('studywrite') }}" class="secondary-link">모집글 작성</a>
+            {% else %}
+                <a href="{{ url_for('signup') }}" class="secondary-link">무료로 시작하기</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
 
-            <nav class="nav-menu">
-                <a href="{{ url_for('index') }}">홈</a>
-                <a href="{{ url_for('study') }}">스터디 찾기</a>
+<section class="showcase-gallery">
+    {% for visual in showcase_visuals %}
+        {% set study = random_studies[loop.index0] if loop.index0 < random_studies|length else None %}
+        {% if study %}
+            {% set target_url = url_for('study_detail', study_id=study.id) %}
+            {% set target_title = study.title %}
+            {% set target_category = study.category %}
+            {% set target_meta = study.writer ~ ' · 정원 ' ~ study.member_count ~ '명' %}
+            {% set target_caption = study.content[:88] ~ ('...' if study.content|length > 88 else '') %}
+        {% else %}
+            {% set target_url = url_for('study') %}
+            {% set target_title = '새로운 스터디를 메인에 올려보세요' %}
+            {% set target_category = 'StudyMate' %}
+            {% set target_meta = '홈에서 먼저 보이는 큐레이션 카드' %}
+            {% set target_caption = '비어 있는 카드도 어색하지 않게, 서비스 썸네일처럼 보이는 구조로 설계했습니다.' %}
+        {% endif %}
 
-                {% if user_nickname %}
-                <div class="user-dropdown">
-                    <button class="user-btn" onclick="toggleDropdown()">
-                        {{ user_nickname }} <span class="arrow">▾</span>
-                    </button>
-
-                    <div class="dropdown-menu" id="dropdownMenu">
-                        <a href="{{ url_for('mypage') }}">마이페이지</a>
-                        <a href="{{ url_for('my_posts') }}">내가 쓴 글</a>
-                        <hr>
-                        <a href="{{ url_for('logout') }}">로그아웃</a>
+        <article class="gallery-card">
+            <a href="{{ target_url }}" class="gallery-frame-link">
+                <div class="gallery-frame theme-{{ visual.tone }}">
+                    <div class="gallery-browser-bar">
+                        <span class="browser-dot"></span>
+                        <span class="browser-dot"></span>
+                        <span class="browser-dot"></span>
+                        <p>{{ visual.label }}</p>
+                    </div>
+                    <div class="gallery-screen">
+                        <img src="{{ url_for('static', filename=visual.image) }}" alt="{{ visual.summary }}">
+                    </div>
+                    <div class="gallery-overlay">
+                        <span class="overlay-tag">{{ target_category }}</span>
+                        <strong>{{ target_title }}</strong>
+                        <p>{{ target_meta }}</p>
                     </div>
                 </div>
-                {% else %}
-                    <a href="{{ url_for('login') }}">로그인</a>
-                {% endif %}
-            </nav>
+            </a>
+
+            <div class="gallery-caption">
+                <h2>{{ visual.label }}</h2>
+                <p>{{ target_caption }}</p>
+            </div>
+        </article>
+    {% endfor %}
+</section>
+
+<section class="editorial-band">
+    <div class="editorial-copy">
+        <p class="portfolio-kicker">EDITOR'S NOTE</p>
+        <h2>스크린샷처럼 보이는 메인 안에서<br>실제 스터디로 바로 이어지게.</h2>
+        <p>
+            첫 화면은 분위기를 만드는 곳이고, 그 다음은 행동이 이어져야 합니다.
+            그래서 홈에서는 큰 썸네일 비주얼로 신뢰를 만들고, 실제 기능은 검색과 모집, 신청 흐름으로 바로 연결되게 두었습니다.
+        </p>
+        <div class="editorial-links">
+            <a href="{{ url_for('study') }}" class="text-link">전체 스터디 보기</a>
+            {% if current_user %}
+                <a href="{{ url_for('mypage') }}" class="text-link">내 활동 관리</a>
+            {% else %}
+                <a href="{{ url_for('signup') }}" class="text-link">회원가입하기</a>
+            {% endif %}
         </div>
-    </header>
+    </div>
 
+    <div class="editorial-panel-grid">
+        <article class="editorial-panel editorial-panel-dark">
+            <p class="panel-label">STUDY FLOW</p>
+            <div class="panel-steps">
+                <span>탐색</span>
+                <span>모집</span>
+                <span>신청</span>
+                <span>합류</span>
+            </div>
+            <p class="panel-copy">스터디를 찾는 과정이 메인에서 끊기지 않도록 구조를 더 단순하고 선명하게 정리했습니다.</p>
+        </article>
 
-    <main>
-        <section>
-            <h2>👋 서비스 소개</h2>
-            <p style="font-size: 18px; color: #555;">
-                혼자 하는 공부가 지치셨나요?<br>
-                <strong>스터디 메이트</strong>에서 열정적인 동료들을 만나보세요!
-            </p>
-        </section>
-
-        <section>
-            <h2>🔥 따끈따끈한 랜덤 추천 스터디</h2>
-
-            <div class="study-list">
-                {% for study in random_studies %}
-                <a href="{{ url_for('study_detail', study_id=study.id) }}"
-                style="color: inherit;">
-                    <article class="card">
-                        <h3>{{ study.title }}</h3>
-
-                        <p>
-                            {% if study.content|length > 50 %}
-                                {{ study.content[:50] }}...
-                            {% else %}
-                                {{ study.content }}
-                            {% endif %}
-                        </p>
-
-                        <span class="tag">{{ study.category }}</span>
-                        <span class="tag">👥 {{ study.member_count }}명</span>
-                    </article>
-                </a>
+        <article class="editorial-panel editorial-panel-light">
+            <p class="panel-label">CATEGORY MAP</p>
+            <div class="panel-chip-grid">
+                {% for group, options in study_categories[:3] %}
+                    {% for option in options[:2] %}
+                        <a href="{{ url_for('study', category=option) }}" class="panel-chip">{{ option }}</a>
+                    {% endfor %}
                 {% endfor %}
             </div>
-
-            {% if random_studies|length == 0 %}
-                <p style="color:#888;">아직 등록된 스터디가 없습니다.</p>
-            {% endif %}
-        </section>
-
-
-        <section>
-            <h2>🚀 나에게 딱 맞는 스터디 찾기</h2>
-            <form action="{{ url_for('study') }}" method="GET">
-                
-                <div class="input-group">
-                    <label>관심있는 주제를 선택해보세요</label>
-                    <select name="category" required>
-                        <option value="">카테고리 선택</option>
-
-                        <optgroup label="취업 / 커리어">
-                            <option>취업 준비</option>
-                            <option>자소서 / 포트폴리오</option>
-                            <option>면접 준비</option>
-                            <option>공기업 / 공시</option>
-                        </optgroup>
-
-                        <optgroup label="자격증">
-                            <option>컴퓨터활용능력</option>
-                            <option>한국사능력검정</option>
-                            <option>토익 / 토플</option>
-                            <option>한국어능력시험</option>
-                            <option>정보처리기사</option>
-                            <option>기타 자격증</option>
-                        </optgroup>
-
-                        <optgroup label="어학 / 외국어">
-                            <option>영어 회화</option>
-                            <option>토익 / 토플</option>
-                            <option>오픽 / 스피킹</option>
-                            <option>일본어</option>
-                            <option>중국어</option>
-                            <option>기타 외국어</option>
-                        </optgroup>
-
-                        <optgroup label="습관 / 자기관리">
-                            <option>공부 인증</option>
-                            <option>루틴 관리</option>
-                            <option>아침형 인간</option>
-                            <option>운동 인증</option>
-                            <option>식단 관리</option>
-                        </optgroup>
-
-                        <optgroup label="IT / 개발">
-                            <option>웹 개발</option>
-                            <option>앱 개발</option>
-                            <option>알고리즘 / 코딩테스트</option>
-                            <option>데이터 분석</option>
-                            <option>AI / 머신러닝</option>
-                            <option>보안 / 해킹</option>
-                        </optgroup>
-
-                        <optgroup label="취미 / 기타">
-                            <option>독서</option>
-                            <option>헬스 / 운동</option>
-                            <option>러닝 / 마라톤</option>
-                            <option>요가 / 스트레칭</option>
-                            <option>악기 연습</option>
-                            <option>그림 / 드로잉</option>
-                            <option>사진 / 영상</option>
-                            <option>재테크 공부</option>
-                            <option>기타</option>
-                        </optgroup>
-                    </select>
-                </div>
-
-                <button type="submit" class="primary-btn">🔍 스터디 찾아보기</button>
-            </form>
-        </section>
-    </main>
-
-    <footer>
-        <p>© 2026 Study Mate. Designed by 김노현</p>
-    </footer>
-
-    <script>
-        function toggleDropdown() {
-            const menu = document.getElementById('dropdownMenu');
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        }
-
-        // 바깥 클릭 시 닫기
-        document.addEventListener('click', function (e) {
-            const dropdown = document.querySelector('.user-dropdown');
-            const menu = document.getElementById('dropdownMenu');
-
-            if (dropdown && !dropdown.contains(e.target)) {
-                menu.style.display = 'none';
-            }
-        });
-    </script>
-
-</body>
-</html>
+        </article>
+    </div>
+</section>
+{% endblock %}

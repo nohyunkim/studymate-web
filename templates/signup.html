@@ -1,119 +1,75 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원가입 - 스터디 메이트</title>
+{% extends "base.html" %}
 
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
+{% block title %}회원가입 - 스터디 메이트{% endblock %}
 
-<div class="center-layout" style="height:auto; padding:50px 0;">
-    <div class="login-card" style="width:400px;">
-        <a href="{{ url_for('home') }}" class="logo" style="display:block; margin-bottom:20px;">STUDY MATE</a>
+{% block content %}
+<div class="center-layout signup-layout">
+    <section class="login-card signup-card">
+        <a href="{{ url_for('home') }}" class="logo auth-logo">STUDY MATE</a>
+        <h2 class="plain-title">회원가입</h2>
+        <p class="auth-copy">실제로 사용하는 정보만 입력받도록 정리했습니다.</p>
 
-        <h2 style="border:none; padding:0; font-size:22px;">회원가입</h2>
+        <form action="{{ url_for('signup') }}" method="POST" class="auth-form">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
 
-        <form action="{{ url_for('signup') }}" method="POST">
-
-            <!-- 아이디 -->
-            <div class="input-group" style="text-align:left;">
-                <label>아이디</label>
+            <div class="input-group">
+                <label for="userid">아이디</label>
                 <div class="input-with-btn">
-                    <input type="text" name="userid" id="userid" placeholder="아이디 입력" required>
+                    <input id="userid" type="text" name="userid" placeholder="4자 이상" required minlength="4">
                     <button type="button" class="small-btn" onclick="checkUserid()">중복확인</button>
                 </div>
             </div>
 
-            <!-- 비밀번호 -->
-            <div class="input-group" style="text-align:left;">
-                <label>비밀번호 <span style="font-size:12px; color:#e74c3c;">(8자 이상)</span></label>
-                <div class="password-wrapper">
-                    <input type="password" id="password" name="password"
-                            placeholder="비밀번호" required minlength="8"
-                            style="padding-right:40px;">
-                </div>
+            <div class="input-group">
+                <label for="nickname">닉네임</label>
+                <input id="nickname" type="text" name="nickname" placeholder="서비스에서 표시되는 이름" required>
             </div>
 
-            <!-- 비밀번호 확인 -->
-            <div class="input-group" style="text-align:left;">
-                <label>비밀번호 확인</label>
-                <div class="password-wrapper">
-                    <input type="password" id="password-confirm" name="password_confirm"
-                            placeholder="비밀번호 다시 입력" required minlength="8"
-                            style="padding-right:40px;">
-                </div>
+            <div class="input-group">
+                <label for="email">이메일</label>
+                <input id="email" type="email" name="email" placeholder="example@email.com" required>
             </div>
 
-            <!-- 닉네임 -->
-            <div class="input-group" style="text-align:left;">
-                <label>닉네임</label>
-                <input type="text" name="nickname" placeholder="활동할 닉네임" required>
+            <div class="input-group">
+                <label for="password">비밀번호</label>
+                <input id="password" type="password" name="password" placeholder="8자 이상" required minlength="8">
             </div>
 
-            <!-- 이메일 인증 -->
-            <div class="input-group" style="text-align:left;">
-                <label>이메일 인증</label>
-                <div class="input-with-btn">
-                    <input type="email" name="email" placeholder="example@email.com" required>
-                    <button type="button" class="small-btn"
-                            onclick="alert('인증번호를 발송했습니다! (현재는 UI만 구현됨)')">
-                        번호전송
-                    </button>
-                </div>
+            <div class="input-group">
+                <label for="password_confirm">비밀번호 확인</label>
+                <input id="password_confirm" type="password" name="password_confirm" placeholder="비밀번호를 다시 입력하세요" required minlength="8">
             </div>
 
-            <div class="input-group" style="text-align:left;">
-                <div class="input-with-btn">
-                    <input type="text" placeholder="인증번호 6자리"
-                            style="background-color:#f8f9fa;">
-                    <button type="button" class="small-btn"
-                            style="background-color:#007bff;"
-                            onclick="alert('인증되었습니다! (현재는 UI만 구현됨)')">
-                        인증확인
-                    </button>
-                </div>
-            </div>
-
-            <!-- 약관 -->
             <div class="agreement-box">
                 <input type="checkbox" id="agree" required>
-                <label for="agree" style="margin:0; cursor:pointer;">
-                    [필수] 개인정보 수집 및 이용에 동의합니다.
-                </label>
+                <label for="agree">[필수] 개인정보 수집 및 이용에 동의합니다.</label>
             </div>
 
-            <button type="submit" class="primary-btn">가입완료</button>
+            <button type="submit" class="primary-btn">가입 완료</button>
         </form>
 
-        <div style="margin-top:20px; font-size:13px;">
-            <p>
-                이미 계정이 있으신가요?
-                <a href="{{ url_for('login') }}" style="color:#007bff; font-weight:bold;">
-                    로그인
-                </a>
-            </p>
-        </div>
-    </div>
+        <p class="auth-footnote">
+            이미 계정이 있으신가요?
+            <a href="{{ url_for('login') }}" class="text-link-inline">로그인</a>
+        </p>
+    </section>
 </div>
+{% endblock %}
 
+{% block scripts %}
 <script>
-function checkUserid() {
-    const userid = document.getElementById('userid').value;
+    function checkUserid() {
+        const userid = document.getElementById('userid').value.trim();
 
-    if (!userid) {
-        alert('아이디를 입력하세요.');
-        return;
+        if (!userid) {
+            alert('아이디를 입력하세요.');
+            return;
+        }
+
+        fetch(`/check-userid?userid=${encodeURIComponent(userid)}`)
+            .then((response) => response.json())
+            .then((data) => alert(data.message))
+            .catch(() => alert('중복확인 중 오류가 발생했습니다.'));
     }
-
-    fetch(`/check-userid?userid=${userid}`)
-        .then(res => res.json())
-        .then(data => alert(data.message))
-        .catch(() => alert('중복확인 중 오류가 발생했습니다.'));
-}
 </script>
-
-</body>
-</html>
+{% endblock %}

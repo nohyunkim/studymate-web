@@ -1,97 +1,83 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>마이페이지 - 스터디 메이트</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
 
-<header>
-    <div class="nav-container">
-        <a href="{{ url_for('index') }}" class="logo">STUDY MATE</a>
-        <nav class="nav-menu">
-            <a href="{{ url_for('index') }}">홈</a>
-            <a href="{{ url_for('study') }}">스터디 찾기</a>
-            <a href="{{ url_for('logout') }}">로그아웃</a>
-        </nav>
-    </div>
-</header>
+{% block title %}마이페이지 - 스터디 메이트{% endblock %}
 
-<main>
-    <section class="profile-section">
-        <div class="profile-icon">👤</div>
-        <h2>{{ user.nickname }}님, 안녕하세요!</h2>
-        <p class="text-muted">
-            {{ user.email }}
-        </p>
+{% block content %}
+<section class="profile-section">
+    <div class="profile-icon">👤</div>
+    <h2>{{ user.nickname }}님, 안녕하세요</h2>
+    <p class="text-muted">{{ user.email }}</p>
 
-
-        <div id="bio-display">
-            <div class="bio-text">
-                {% if user.bio %}
-                    "{{ user.bio }}"
-                {% else %}
-                    <span style="color:#aaa;">아직 한줄 소개가 없습니다. 작성해보세요! 👇</span>
-                {% endif %}
-            </div>
-            <button onclick="toggleBioEdit()" class="small-text-btn">✏️ 한줄 소개 수정하기</button>
+    <div id="bio-display">
+        <div class="bio-text">
+            {% if user.bio %}
+                "{{ user.bio }}"
+            {% else %}
+                <span class="text-muted">아직 한줄 소개가 없습니다.</span>
+            {% endif %}
         </div>
-
-        <form id="bio-form" class="hidden"
-            action="{{ url_for('update_profile') }}"
-            method="POST">
-            <div class="input-wrapper">
-                <textarea name="bio" id="bio-input" class="bio-input" rows="2" maxlength="50"
-                    placeholder="나를 표현하는 한마디 (50자 이내)">{{ user.bio if user.bio else '' }}</textarea>
-            </div>
-            
-            <div style="margin-top: 8px;">
-                <button type="submit" class="primary-btn" style="width: auto; padding: 6px 14px; font-size: 13px;">저장</button>
-                <button type="button" onclick="toggleBioEdit()" class="secondary-btn">취소</button>
-            </div>
-        </form>
-    </section>
-
-    <div class="tab-menu">
-        <button class="tab-btn active" onclick="openTab('host')">👑 내가 만든 스터디</button>
-        <button class="tab-btn" onclick="openTab('guest')">🚀 내가 신청한 스터디</button>
+        <button type="button" class="small-text-btn" onclick="toggleBioEdit()">한줄 소개 수정</button>
     </div>
 
-    <div id="host" class="tab-content active">
-        <div class="study-list">
-            {% for study in my_studies %}
-            <div class="card">
-                <div>
-                    <h3>{{ study.title }}</h3>
-                    <span class="tag">{{ study.category }}</span>
-                    <span class="tag">👥 {{ study.member_count }}명 모집</span>
-                    <hr class="divider-line">
-                    
-                    <h4 style="margin: 10px 0;">📬 신청자 관리 ({{ study.enrollments|length }})</h4>
+    <form id="bio-form" class="hidden compact-form" action="{{ url_for('update_profile') }}" method="POST">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+        <div class="input-wrapper">
+            <textarea name="bio" id="bio-input" class="bio-input" rows="2" maxlength="50" placeholder="나를 표현하는 한마디 (50자 이내)">{{ user.bio or '' }}</textarea>
+        </div>
+        <div class="inline-actions">
+            <button type="submit" class="secondary-btn">저장</button>
+            <button type="button" class="secondary-btn" onclick="toggleBioEdit()">취소</button>
+        </div>
+    </form>
+</section>
+
+<div class="tab-menu">
+    <button type="button" class="tab-btn active" onclick="openTab(event, 'host')">내가 만든 스터디</button>
+    <button type="button" class="tab-btn" onclick="openTab(event, 'guest')">내가 신청한 스터디</button>
+</div>
+
+<div id="host" class="tab-content active">
+    <div class="study-list">
+        {% for study in my_studies %}
+            <article class="card">
+                <div class="card-top">
+                    <span class="card-status {% if study.is_closed %}closed{% endif %}">
+                        {% if study.is_closed %}모집 마감{% else %}모집 중{% endif %}
+                    </span>
+                    <h3><a href="{{ url_for('study_detail', study_id=study.id) }}">{{ study.title }}</a></h3>
+                    <div class="tag-row">
+                        <span class="tag">{{ study.category }}</span>
+                        <span class="tag">👥 {{ study.member_count }}명 정원</span>
+                    </div>
                 </div>
-                
+
                 <div>
-                    {% if study.enrollments|length == 0 %}
-                        <p style="font-size:13px; color:#999;">아직 신청자가 없습니다.</p>
+                    <h4 class="subheading">신청자 관리 ({{ study.enrollments|length }})</h4>
+                    <div class="inline-actions">
+                        <a href="{{ url_for('study_detail', study_id=study.id) }}" class="secondary-link compact-link">상세 보기</a>
+                        <a href="{{ url_for('study_chat', study_id=study.id) }}" class="primary-link compact-link">채팅방</a>
+                    </div>
+
+                    {% if not study.enrollments %}
+                        <p class="text-muted">아직 신청자가 없습니다.</p>
                     {% else %}
                         {% for enroll in study.enrollments %}
                             <div class="applicant-item">
                                 <div class="applicant-info">
-                                    <a href="{{ url_for('profile', nickname=enroll.user.nickname) }}">
-                                        {{ enroll.user.nickname }}
-                                    </a>
-                                    <div class="applicant-bio">
-                                        {{ enroll.user.bio if enroll.user.bio else "아직 소개글이 없습니다." }}
-                                    </div>
+                                    <a href="{{ url_for('profile', nickname=enroll.user.nickname) }}">{{ enroll.user.nickname }}</a>
+                                    <div class="applicant-bio">{{ enroll.user.bio or "아직 소개글이 없습니다." }}</div>
                                 </div>
 
                                 <div class="applicant-actions">
                                     {% if enroll.status == 0 %}
-                                        <a href="{{ url_for('enrollment_action', enrollment_id=enroll.id, action='accept') }}" 
-                                            class="small-btn" style="background:#28a745; color:white; text-decoration:none; padding:5px 10px; border-radius:4px;">승인</a>
-                                        <a href="{{ url_for('enrollment_action', enrollment_id=enroll.id, action='reject') }}" 
-                                            class="small-btn" style="background:#dc3545; color:white; text-decoration:none; padding:5px 10px; border-radius:4px;">거절</a>
+                                        <form action="{{ url_for('enrollment_action', enrollment_id=enroll.id, action='accept') }}" method="POST" class="inline-form">
+                                            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+                                            <button type="submit" class="small-btn accept-btn">승인</button>
+                                        </form>
+                                        <form action="{{ url_for('enrollment_action', enrollment_id=enroll.id, action='reject') }}" method="POST" class="inline-form">
+                                            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+                                            <button type="submit" class="small-btn reject-btn">거절</button>
+                                        </form>
                                     {% elif enroll.status == 1 %}
                                         <span class="status-badge status-1">승인됨</span>
                                     {% else %}
@@ -102,88 +88,70 @@
                         {% endfor %}
                     {% endif %}
                 </div>
-            </div>
-            {% endfor %}
+            </article>
+        {% endfor %}
 
-            {% if my_studies|length == 0 %}
-                <p style="grid-column: 1 / -1; text-align:center; padding:30px; color:#888;">아직 모집 중인 스터디가 없습니다.</p>
-            {% endif %}
-        </div>
+        {% if not my_studies %}
+            <p class="empty-message">아직 만든 스터디가 없습니다.</p>
+        {% endif %}
     </div>
+</div>
 
-    <div id="guest" class="tab-content">
-        <div class="study-list">
-            {% for enroll in my_enrollments %}
-            <div class="card">
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                    <span class="tag">{{ enroll.study.category }}</span>
-                    {% if enroll.status == 0 %}
-                        <span class="status-badge status-0">⏳ 대기중</span>
-                    {% elif enroll.status == 1 %}
-                        <span class="status-badge status-1">🎉 승인됨</span>
-                    {% else %}
-                        <span class="status-badge status-2">😭 거절됨</span>
-                    {% endif %}
+<div id="guest" class="tab-content">
+    <div class="study-list">
+        {% for enroll in my_enrollments %}
+            <article class="card">
+                <div class="card-top">
+                    <div class="card-row">
+                        <span class="tag">{{ enroll.study.category }}</span>
+                        {% if enroll.status == 0 %}
+                            <span class="status-badge status-0">대기중</span>
+                        {% elif enroll.status == 1 %}
+                            <span class="status-badge status-1">승인됨</span>
+                        {% else %}
+                            <span class="status-badge status-2">거절됨</span>
+                        {% endif %}
+                    </div>
+                    <h3><a href="{{ url_for('study_detail', study_id=enroll.study.id) }}">{{ enroll.study.title }}</a></h3>
+                    <p class="text-muted">방장: {{ enroll.study.writer }}</p>
                 </div>
 
-                <h3>
-                    <a href="{{ url_for('study_detail', study_id=enroll.study.id) }}">
-                        {{ enroll.study.title }}
-                    </a>
-                </h3>
-                <p style="font-size:13px; color:#666;">방장: {{ enroll.study.writer }}</p>
+                <div class="card-row">
+                    {% if enroll.status == 1 %}
+                        <a href="{{ url_for('study_chat', study_id=enroll.study.id) }}" class="primary-link compact-link">채팅방 입장</a>
+                    {% endif %}
+                    {% if enroll.status == 1 and enroll.study.chat_link %}
+                        <a href="{{ enroll.study.chat_link }}" target="_blank" rel="noopener noreferrer" class="secondary-link compact-link">오픈채팅 입장</a>
+                    {% endif %}
+                </div>
+            </article>
+        {% endfor %}
 
-                {% if enroll.status == 1 and enroll.study.chat_link %}
-                    <div style="margin-top:15px; background:#e8f3ff; padding:10px; border-radius:6px;">
-                        <a href="{{ enroll.study.chat_link }}" target="_blank" style="font-weight:bold; color:#007bff; display:flex; align-items:center; gap:5px;">
-                            💬 오픈채팅방 입장하기
-                        </a>
-                    </div>
-                {% endif %}
-            </div>
-            {% endfor %}
-
-            {% if my_enrollments|length == 0 %}
-                <p style="grid-column: 1 / -1; text-align:center; padding:30px; color:#888;">아직 신청한 스터디가 없습니다.</p>
-            {% endif %}
-        </div>
+        {% if not my_enrollments %}
+            <p class="empty-message">아직 신청한 스터디가 없습니다.</p>
+        {% endif %}
     </div>
-</main>
+</div>
+{% endblock %}
 
+{% block scripts %}
 <script>
-    // 1. 탭 메뉴 전환 함수
-    function openTab(tabName) {
-        var contents = document.getElementsByClassName("tab-content");
-        for (var i = 0; i < contents.length; i++) {
-            contents[i].className = contents[i].className.replace(" active", "");
-        }
-        var btns = document.getElementsByClassName("tab-btn");
-        for (var i = 0; i < btns.length; i++) {
-            btns[i].className = btns[i].className.replace(" active", "");
-        }
-        document.getElementById(tabName).className += " active";
-        event.currentTarget.className += " active";
+    function openTab(event, tabName) {
+        document.querySelectorAll('.tab-content').forEach((content) => {
+            content.classList.remove('active');
+        });
+
+        document.querySelectorAll('.tab-btn').forEach((button) => {
+            button.classList.remove('active');
+        });
+
+        document.getElementById(tabName).classList.add('active');
+        event.currentTarget.classList.add('active');
     }
 
-    // 2. 한줄 소개 수정창 토글 함수
     function toggleBioEdit() {
-        const displayDiv = document.getElementById('bio-display');
-        const formDiv = document.getElementById('bio-form');
-
-        if (formDiv.style.display === 'none') {
-            displayDiv.style.display = 'none';
-            formDiv.style.display = 'block';
-            const textarea = document.getElementById('bio-input');
-            textarea.focus();
-            const val = textarea.value; 
-            textarea.value = ''; 
-            textarea.value = val; 
-        } else {
-            displayDiv.style.display = 'block';
-            formDiv.style.display = 'none';
-        }
+        document.getElementById('bio-display').classList.toggle('hidden');
+        document.getElementById('bio-form').classList.toggle('hidden');
     }
 </script>
-
-</body>
-</html>
+{% endblock %}

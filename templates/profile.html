@@ -1,64 +1,43 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ target_user.nickname }}님의 프로필</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
 
-<header>
-    <div class="nav-container">
-        <a href="{{ url_for('index') }}" class="logo">STUDY MATE</a>
-        <nav class="nav-menu">
-            <a href="javascript:history.back()">⬅ 뒤로가기</a>
-        </nav>
-    </div>
-</header>
+{% block title %}{{ target_user.nickname }}님의 프로필{% endblock %}
 
-<div class="profile-header">
+{% block content %}
+<section class="profile-header">
     <div class="user-avatar">👤</div>
-    <div class="user-nickname">{{ target_user.nickname }}</div>
-    
+    <h2>{{ target_user.nickname }}</h2>
     <div class="user-bio">
-        <span style="color:#007bff; font-weight:bold; font-size:20px;">“</span>
-        {{ target_user.bio if target_user.bio else "아직 한줄 소개가 없습니다." }}
-        <span style="color:#007bff; font-weight:bold; font-size:20px;">”</span>
+        {{ target_user.bio or "아직 한줄 소개가 없습니다." }}
     </div>
-</div>
+</section>
 
-<main>
-    <section>
-        <h3 style="text-align: center; margin-bottom: 30px;">
-            📢 {{ target_user.nickname }}님이 모집 중인 스터디
-        </h3>
+<section>
+    <div class="section-heading">
+        <h2>{{ target_user.nickname }}님이 만든 스터디</h2>
+    </div>
 
-        <div class="study-list">
-            {% for study in studies %}
-            <a href="{{ url_for('study_detail', study_id=study.id) }}" style="color: inherit; text-decoration: none;">
+    <div class="study-list">
+        {% for study in studies %}
+            <a href="{{ url_for('study_detail', study_id=study.id) }}" class="card-link">
                 <article class="card">
-                    <h3>{{ study.title }}</h3>
-                    <p style="color: #666; font-size: 14px; margin-bottom: 10px;">
-                        {{ study.content[:40] }}...
-                    </p>
-                    <span class="tag">{{ study.category }}</span>
-                    <span class="tag">👥 {{ study.member_count }}명 모집</span>
+                    <div class="card-top">
+                        <span class="card-status {% if study.is_closed %}closed{% endif %}">
+                            {% if study.is_closed %}모집 마감{% else %}모집 중{% endif %}
+                        </span>
+                        <h3>{{ study.title }}</h3>
+                        <p class="card-body">{{ study.content[:90] }}{% if study.content|length > 90 %}...{% endif %}</p>
+                    </div>
+                    <div class="tag-row">
+                        <span class="tag">{{ study.category }}</span>
+                        <span class="tag">👥 {{ study.member_count }}명 정원</span>
+                    </div>
                 </article>
             </a>
-            {% endfor %}
+        {% endfor %}
 
-            {% if studies|length == 0 %}
-                <p style="grid-column: 1 / -1; text-align:center; color:#888;">
-                    현재 모집 중인 스터디가 없습니다.
-                </p>
-            {% endif %}
-        </div>
-    </section>
-</main>
-
-<footer>
-    <p>© 2026 Study Mate</p>
-</footer>
-
-</body>
-</html>
+        {% if not studies %}
+            <p class="empty-message">아직 만든 스터디가 없습니다.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
