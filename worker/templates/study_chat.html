@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}{{ study.title }} 채팅방 - 스터디 메이트{% endblock %}
+
+{% block content %}
+<section class="chat-shell">
+    <div class="chat-header-card">
+        <div>
+            <p class="section-kicker">STUDY CHAT</p>
+            <h2>{{ study.title }}</h2>
+            <p class="detail-meta">
+                <span>운영 {{ study.writer }}</span>
+                <span>{{ study.category }}</span>
+                <span>승인 {{ study.enrollments | selectattr('status', 'equalto', 1) | list | length }}명</span>
+            </p>
+        </div>
+
+        <div class="chat-header-actions">
+            <a href="{{ url_for('study_detail', study_id=study.id) }}" class="secondary-link compact-link">스터디 상세</a>
+            {% if study.chat_link %}
+                <a href="{{ study.chat_link }}" target="_blank" rel="noopener noreferrer" class="primary-link compact-link">오픈채팅</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="chat-room-panel">
+        <div class="chat-message-stack" id="chat-message-stack">
+            {% for message in messages %}
+                <article class="chat-bubble {% if message.user_id == user.id %}mine{% endif %}">
+                    <div class="chat-bubble-meta">
+                        <strong>{{ message.user.nickname }}</strong>
+                        <span class="date">{{ message.date.strftime('%m-%d %H:%M') }}</span>
+                    </div>
+                    <p>{{ message.content }}</p>
+                </article>
+            {% endfor %}
+
+            {% if not messages %}
+                <p class="empty-message">아직 메시지가 없습니다. 첫 인사를 남겨보세요.</p>
+            {% endif %}
+        </div>
+
+        <form action="{{ url_for('study_chat', study_id=study.id) }}" method="POST" class="chat-compose-form" id="chat-compose-form">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+            <textarea name="content" id="chat-compose-input" maxlength="300" placeholder="승인된 멤버끼리 대화를 시작해보세요." required></textarea>
+            <div class="chat-compose-actions">
+                <span class="chat-compose-status help-text" id="chat-compose-status"></span>
+                <span class="help-text">최대 300자</span>
+                <button type="submit" class="primary-btn compact-btn">보내기</button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const messageStack = document.getElementById("chat-message-stack");
+    const composeForm = document.getElementById("chat-compose-form");
+    const composeInput = document.getElementById("chat-compose-input");
+    const composeStatus = document.getElementById("chat-compose-status");
+    const currentUserId = {{ user.id|tojson }};
+    const streamUrl = {{ (chat_stream_url if chat_stream_url is defined else url_for('study_chat_stream', study_id=study.id))|tojson }};
+    const pollUrl = {{ (chat_poll_url if chat_poll_url is defined else '')|tojson }};
+    const postUrl = {{ url_for('study_chat', study_id=study.id)|tojson }};
+    const csrfToken = {{ csrf_token|tojson }};
+    let lastMessageId = {{ (messages[-1].id if messages else 0)|tojson }};
+
+    function scrollChatToBottom() {
+        if (messageStack) {
+            messageStack.scrollTop = messageStack.scrollHeight;
+        }
+    }
+
+    function renderMessage(message) {
+        const emptyMessage = messageStack.querySelector(".empty-message");
+        if (emptyMessage) {
+            emptyMessage.remove();
+        }
+
+        const article = document.createElement("article");
+        article.className = "chat-bubble" + (message.user_id === currentUserId ? " mine" : "");
+
+        const meta = document.createElement("div");
+        meta.className = "chat-bubble-meta";
+
+        const writer = document.createElement("strong");
+        writer.textContent = message.writer;
+
+        const date = document.createElement("span");
+        date.className = "date";
+        date.textContent = message.date;
+
+        const content = document.createElement("p");
+        content.textContent = message.content;
+
+        meta.appendChild(writer);
+        meta.appendChild(date);
+        article.appendChild(meta);
+        article.appendChild(content);
+        messageStack.appendChild(article);
+        lastMessageId = Math.max(lastMessageId, Number(message.id || 0));
+        scrollChatToBottom();
+    }
+
+    async function pollMessages() {
+        if (!pollUrl) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${pollUrl}?after_id=${encodeURIComponent(lastMessageId)}`, {
+                headers: {
+                    "Accept": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("채팅을 새로고침하지 못했습니다.");
+            }
+
+            const data = await response.json();
+            if (data.ok && Array.isArray(data.messages)) {
+                data.messages.forEach(renderMessage);
+            }
+
+            if (composeStatus && composeStatus.textContent === "연결을 다시 확인하는 중입니다.") {
+                composeStatus.textContent = "";
+            }
+        } catch (error) {
+            if (composeStatus) {
+                composeStatus.textContent = "연결을 다시 확인하는 중입니다.";
+            }
+        }
+    }
+
+    if (messageStack) {
+        scrollChatToBottom();
+        if (streamUrl) {
+            const eventSource = new EventSource(streamUrl);
+
+            eventSource.onmessage = (event) => {
+                const payload = JSON.parse(event.data);
+                renderMessage(payload);
+            };
+
+            eventSource.onerror = () => {
+                if (composeStatus) {
+                    composeStatus.textContent = "연결이 잠시 불안정합니다. 다시 연결 중입니다.";
+                }
+            };
+        } else if (pollUrl) {
+            pollMessages();
+            window.setInterval(pollMessages, 3000);
+        }
+    }
+
+    if (composeForm) {
+        composeForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const content = composeInput.value.trim();
+            if (!content) {
+                return;
+            }
+
+            composeInput.disabled = true;
+            composeStatus.textContent = "보내는 중...";
+
+            try {
+                const response = await fetch(postUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrfToken
+                    },
+                    body: JSON.stringify({ content })
+                });
+
+                const data = await response.json();
+                if (!response.ok || !data.ok) {
+                    throw new Error(data.message || "메시지를 보내지 못했습니다.");
+                }
+
+                composeInput.value = "";
+                composeStatus.textContent = "";
+                if (!streamUrl && data.message) {
+                    renderMessage(data.message);
+                }
+            } catch (error) {
+                composeStatus.textContent = error.message;
+            } finally {
+                composeInput.disabled = false;
+                composeInput.focus();
+            }
+        });
+    }
+</script>
+{% endblock %}

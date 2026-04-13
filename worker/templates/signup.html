@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}회원가입 - 스터디 메이트{% endblock %}
+
+{% block content %}
+<div class="center-layout signup-layout">
+    <section class="login-card signup-card">
+        <a href="{{ url_for('home') }}" class="logo auth-logo">STUDY MATE</a>
+        <h2 class="plain-title">회원가입</h2>
+        <p class="auth-copy">실제로 사용하는 정보만 입력받도록 정리했습니다.</p>
+
+        <form action="{{ url_for('signup') }}" method="POST" class="auth-form">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+
+            <div class="input-group">
+                <label for="userid">아이디</label>
+                <div class="input-with-btn">
+                    <input id="userid" type="text" name="userid" placeholder="4자 이상" required minlength="4">
+                    <button type="button" class="small-btn" onclick="checkUserid()">중복확인</button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="nickname">닉네임</label>
+                <input id="nickname" type="text" name="nickname" placeholder="서비스에서 표시되는 이름" required>
+            </div>
+
+            <div class="input-group">
+                <label for="email">이메일</label>
+                <input id="email" type="email" name="email" placeholder="example@email.com" required>
+            </div>
+
+            <div class="input-group">
+                <label for="password">비밀번호</label>
+                <input id="password" type="password" name="password" placeholder="8자 이상" required minlength="8">
+            </div>
+
+            <div class="input-group">
+                <label for="password_confirm">비밀번호 확인</label>
+                <input id="password_confirm" type="password" name="password_confirm" placeholder="비밀번호를 다시 입력하세요" required minlength="8">
+            </div>
+
+            <div class="agreement-box">
+                <input type="checkbox" id="agree" required>
+                <label for="agree">[필수] 개인정보 수집 및 이용에 동의합니다.</label>
+            </div>
+
+            <button type="submit" class="primary-btn">가입 완료</button>
+        </form>
+
+        <p class="auth-footnote">
+            이미 계정이 있으신가요?
+            <a href="{{ url_for('login') }}" class="text-link-inline">로그인</a>
+        </p>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function checkUserid() {
+        const userid = document.getElementById('userid').value.trim();
+
+        if (!userid) {
+            alert('아이디를 입력하세요.');
+            return;
+        }
+
+        fetch(`/check-userid?userid=${encodeURIComponent(userid)}`)
+            .then((response) => response.json())
+            .then((data) => alert(data.message))
+            .catch(() => alert('중복확인 중 오류가 발생했습니다.'));
+    }
+</script>
+{% endblock %}

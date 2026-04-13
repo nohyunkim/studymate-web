@@ -1,7 +1,8 @@
 name = "studymate-web"
-main = "cf_worker.py"
+main = "worker/cf_worker.py"
 compatibility_date = "2026-04-13"
 compatibility_flags = ["python_workers"]
+workers_dev = true
 
 [assets]
 directory = "./static"
@@ -11,4 +12,4 @@ run_worker_first = ["/", "/login", "/logout", "/check-userid", "/signup", "/stud
 [[d1_databases]]
 binding = "DB"
 database_name = "studymate-db"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "da001973-efd4-4229-9062-bf46e02f51c3"

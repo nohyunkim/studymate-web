@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}내 채팅 - 스터디 메이트{% endblock %}
+
+{% block content %}
+<section class="section-heading">
+    <div>
+        <p class="section-kicker">CHAT</p>
+        <h2>내 채팅</h2>
+    </div>
+</section>
+
+<section class="chat-room-list">
+    {% for study in studies %}
+        <article class="chat-room-card">
+            <div class="chat-room-card-top">
+                <div>
+                    <span class="tag">{{ study.category }}</span>
+                    <h3><a href="{{ url_for('study_chat', study_id=study.id) }}">{{ study.title }}</a></h3>
+                    <p class="text-muted">운영 {{ study.writer }}</p>
+                </div>
+                <a href="{{ url_for('study_chat', study_id=study.id) }}" class="primary-link compact-link">입장</a>
+            </div>
+
+            {% if study.chat_messages %}
+                {% set last_message = study.chat_messages[-1] %}
+                <div class="chat-room-preview">
+                    <strong>{{ last_message.user.nickname }}</strong>
+                    <p>{{ last_message.content }}</p>
+                    <span class="date">{{ last_message.date.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+            {% else %}
+                <p class="text-muted">아직 대화가 없습니다. 첫 메시지를 남겨보세요.</p>
+            {% endif %}
+        </article>
+    {% endfor %}
+
+    {% if not studies %}
+        <p class="empty-message">참여 중인 채팅방이 없습니다. 승인된 스터디가 생기면 여기에 표시됩니다.</p>
+    {% endif %}
+</section>
+{% endblock %}

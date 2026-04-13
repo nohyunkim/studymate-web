@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}내가 쓴 글 - 스터디 메이트{% endblock %}
+
+{% block content %}
+<section>
+    <div class="section-heading">
+        <h2>내가 만든 스터디</h2>
+    </div>
+
+    <div class="study-list">
+        {% for study in studies %}
+            <a href="{{ url_for('study_detail', study_id=study.id) }}" class="card-link">
+                <article class="card">
+                    <div class="card-top">
+                        <span class="card-status {% if study.is_closed %}closed{% endif %}">
+                            {% if study.is_closed %}모집 마감{% else %}모집 중{% endif %}
+                        </span>
+                        <h3>{{ study.title }}</h3>
+                        <p class="card-body">{{ study.content[:90] }}{% if study.content|length > 90 %}...{% endif %}</p>
+                    </div>
+                    <div class="card-meta">
+                        <span class="meta-line">📂 {{ study.category }}</span>
+                        <span class="meta-line">👥 {{ study.member_count }}명 정원</span>
+                    </div>
+                </article>
+            </a>
+        {% endfor %}
+
+        {% if not studies %}
+            <div class="empty-message">
+                <p>아직 작성한 모집글이 없습니다.</p>
+                <a href="{{ url_for('studywrite') }}" class="primary-link">첫 스터디 모집하기</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

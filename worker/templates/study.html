@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}스터디 찾기 - 스터디 메이트{% endblock %}
+
+{% block content %}
+<section>
+    <div class="section-heading">
+        <h2>원하는 스터디를 찾아보세요</h2>
+        {% if current_user %}
+            <a href="{{ url_for('studywrite') }}" class="primary-link compact-link">모집글 작성</a>
+        {% endif %}
+    </div>
+
+    <form action="{{ url_for('study') }}" method="GET" class="filter-panel filter-grid">
+        <div class="input-group">
+            <label for="keyword">검색어</label>
+            <input id="keyword" type="text" name="keyword" value="{{ keyword }}" placeholder="제목이나 내용으로 검색">
+        </div>
+        <div class="input-group">
+            <label for="category">카테고리</label>
+            <select id="category" name="category">
+                <option value="">전체 카테고리</option>
+                {% for group, options in study_categories %}
+                    <optgroup label="{{ group }}">
+                        {% for option in options %}
+                            <option value="{{ option }}" {% if option == category %}selected{% endif %}>{{ option }}</option>
+                        {% endfor %}
+                    </optgroup>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="filter-actions">
+            <button type="submit" class="primary-btn">검색</button>
+            {% if keyword or category %}
+                <a href="{{ url_for('study') }}" class="text-link">필터 초기화</a>
+            {% endif %}
+        </div>
+    </form>
+</section>
+
+<section>
+    <div class="study-list">
+        {% for post in pagination.items %}
+            <a href="{{ url_for('study_detail', study_id=post.id) }}" class="card-link">
+                <article class="card">
+                    <div class="card-top">
+                        <span class="card-status {% if post.is_closed %}closed{% endif %}">
+                            {% if post.is_closed %}모집 마감{% else %}모집 중{% endif %}
+                        </span>
+                        <h3>{{ post.title }}</h3>
+                        <p class="card-body">
+                            {% if post.content|length > 90 %}
+                                {{ post.content[:90] }}...
+                            {% else %}
+                                {{ post.content }}
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <div class="card-meta">
+                        <span class="meta-line">👑 {{ post.writer }}</span>
+                        <span class="meta-line">👥 {{ post.member_count }}명 정원</span>
+                    </div>
+
+                    <div class="tag-row">
+                        <span class="tag">{{ post.category }}</span>
+                    </div>
+                </article>
+            </a>
+        {% endfor %}
+
+        {% if pagination.total == 0 %}
+            <p class="empty-message">조건에 맞는 스터디가 아직 없습니다.</p>
+        {% endif %}
+    </div>
+
+    {% if pagination.total > 0 %}
+        <div class="pagination">
+            {% if pagination.has_prev %}
+                <a href="{{ url_for('study', page=pagination.prev_num, keyword=keyword, category=category) }}">&lt;</a>
+            {% endif %}
+
+            {% for page_num in pagination.iter_pages() %}
+                {% if page_num %}
+                    {% if page_num == pagination.page %}
+                        <a href="#" class="active">{{ page_num }}</a>
+                    {% else %}
+                        <a href="{{ url_for('study', page=page_num, keyword=keyword, category=category) }}">{{ page_num }}</a>
+                    {% endif %}
+                {% else %}
+                    <span>...</span>
+                {% endif %}
+            {% endfor %}
+
+            {% if pagination.has_next %}
+                <a href="{{ url_for('study', page=pagination.next_num, keyword=keyword, category=category) }}">&gt;</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}StudyMate{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <header class="site-header">
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}" class="logo">StudyMate</a>
+
+            <nav class="nav-menu" aria-label="Primary">
+                <a href="{{ url_for('home') }}" class="{% if request.endpoint == 'home' %}active{% endif %}">홈</a>
+                <a href="{{ url_for('study') }}" class="{% if request.endpoint in ['study', 'study_detail', 'studywrite', 'study_edit'] %}active{% endif %}">스터디 찾기</a>
+
+                {% if current_user %}
+                    <div class="user-dropdown">
+                        <button type="button" class="user-btn" data-dropdown-toggle>
+                            {{ current_user.nickname }}님 <span class="arrow">▾</span>
+                        </button>
+
+                        <div class="dropdown-menu" data-dropdown-menu>
+                            <a href="{{ url_for('chats') }}">내 채팅</a>
+                            <a href="{{ url_for('mypage') }}">마이페이지</a>
+                            <a href="{{ url_for('my_posts') }}">내가 쓴 글</a>
+                            <hr>
+                            <form action="{{ url_for('logout') }}" method="POST" class="dropdown-form">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+                                <button type="submit" class="dropdown-link danger-link">로그아웃</button>
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="auth-link-group" aria-label="로그인 또는 회원가입">
+                        <a href="{{ url_for('login') }}" class="{% if request.endpoint == 'login' %}active{% endif %}">로그인</a>
+                        <span>/</span>
+                        <a href="{{ url_for('signup') }}" class="{% if request.endpoint == 'signup' %}active{% endif %}">회원가입</a>
+                    </div>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <section class="flash-stack">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </section>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <p class="footer-brand">StudyMate</p>
+            <p>혼자보다 오래 가는 공부 루틴을 위한 스터디 플랫폼</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("click", function (event) {
+            const dropdown = document.querySelector(".user-dropdown");
+            if (!dropdown) {
+                return;
+            }
+
+            const menu = dropdown.querySelector("[data-dropdown-menu]");
+            const toggle = dropdown.querySelector("[data-dropdown-toggle]");
+
+            if (toggle.contains(event.target)) {
+                menu.classList.toggle("open");
+                return;
+            }
+
+            if (!dropdown.contains(event.target)) {
+                menu.classList.remove("open");
+            }
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

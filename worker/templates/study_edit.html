@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}스터디 수정 - 스터디 메이트{% endblock %}
+
+{% block content %}
+<section>
+    <div class="section-heading">
+        <h2>스터디 모집글 수정</h2>
+    </div>
+
+    <form method="POST" class="editor-form">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+
+        <div class="input-group">
+            <label for="title">스터디 제목</label>
+            <input id="title" type="text" name="title" value="{{ study.title }}" required maxlength="200">
+        </div>
+
+        <div class="form-columns">
+            <div class="input-group">
+                <label for="category">카테고리</label>
+                <select id="category" name="category" required>
+                    {% for group, options in study_categories %}
+                        <optgroup label="{{ group }}">
+                            {% for option in options %}
+                                <option value="{{ option }}" {% if option == study.category %}selected{% endif %}>{{ option }}</option>
+                            {% endfor %}
+                        </optgroup>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="member_count">모집 인원</label>
+                <input id="member_count" type="number" name="member_count" value="{{ study.member_count }}" min="1" required>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="chat_link">오픈채팅방 링크</label>
+            <input id="chat_link" type="url" name="chat_link" value="{{ study.chat_link or '' }}" placeholder="https://open.kakao.com/...">
+        </div>
+
+        <div class="input-group">
+            <label for="content">상세 내용</label>
+            <textarea id="content" name="content" required>{{ study.content }}</textarea>
+        </div>
+
+        <button type="submit" class="primary-btn">수정 완료</button>
+    </form>
+</section>
+{% endblock %}

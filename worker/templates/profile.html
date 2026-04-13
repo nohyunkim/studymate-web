@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}{{ target_user.nickname }}님의 프로필{% endblock %}
+
+{% block content %}
+<section class="profile-header">
+    <div class="user-avatar">👤</div>
+    <h2>{{ target_user.nickname }}</h2>
+    <div class="user-bio">
+        {{ target_user.bio or "아직 한줄 소개가 없습니다." }}
+    </div>
+</section>
+
+<section>
+    <div class="section-heading">
+        <h2>{{ target_user.nickname }}님이 만든 스터디</h2>
+    </div>
+
+    <div class="study-list">
+        {% for study in studies %}
+            <a href="{{ url_for('study_detail', study_id=study.id) }}" class="card-link">
+                <article class="card">
+                    <div class="card-top">
+                        <span class="card-status {% if study.is_closed %}closed{% endif %}">
+                            {% if study.is_closed %}모집 마감{% else %}모집 중{% endif %}
+                        </span>
+                        <h3>{{ study.title }}</h3>
+                        <p class="card-body">{{ study.content[:90] }}{% if study.content|length > 90 %}...{% endif %}</p>
+                    </div>
+                    <div class="tag-row">
+                        <span class="tag">{{ study.category }}</span>
+                        <span class="tag">👥 {{ study.member_count }}명 정원</span>
+                    </div>
+                </article>
+            </a>
+        {% endfor %}
+
+        {% if not studies %}
+            <p class="empty-message">아직 만든 스터디가 없습니다.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

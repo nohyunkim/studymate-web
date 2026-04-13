@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}마이페이지 - 스터디 메이트{% endblock %}
+
+{% block content %}
+<section class="profile-section">
+    <div class="profile-icon">👤</div>
+    <h2>{{ user.nickname }}님, 안녕하세요</h2>
+    <p class="text-muted">{{ user.email }}</p>
+
+    <div id="bio-display">
+        <div class="bio-text">
+            {% if user.bio %}
+                "{{ user.bio }}"
+            {% else %}
+                <span class="text-muted">아직 한줄 소개가 없습니다.</span>
+            {% endif %}
+        </div>
+        <button type="button" class="small-text-btn" onclick="toggleBioEdit()">한줄 소개 수정</button>
+    </div>
+
+    <form id="bio-form" class="hidden compact-form" action="{{ url_for('update_profile') }}" method="POST">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+        <div class="input-wrapper">
+            <textarea name="bio" id="bio-input" class="bio-input" rows="2" maxlength="50" placeholder="나를 표현하는 한마디 (50자 이내)">{{ user.bio or '' }}</textarea>
+        </div>
+        <div class="inline-actions">
+            <button type="submit" class="secondary-btn">저장</button>
+            <button type="button" class="secondary-btn" onclick="toggleBioEdit()">취소</button>
+        </div>
+    </form>
+</section>
+
+<div class="tab-menu">
+    <button type="button" class="tab-btn active" onclick="openTab(event, 'host')">내가 만든 스터디</button>
+    <button type="button" class="tab-btn" onclick="openTab(event, 'guest')">내가 신청한 스터디</button>
+</div>
+
+<div id="host" class="tab-content active">
+    <div class="study-list">
+        {% for study in my_studies %}
+            <article class="card">
+                <div class="card-top">
+                    <span class="card-status {% if study.is_closed %}closed{% endif %}">
+                        {% if study.is_closed %}모집 마감{% else %}모집 중{% endif %}
+                    </span>
+                    <h3><a href="{{ url_for('study_detail', study_id=study.id) }}">{{ study.title }}</a></h3>
+                    <div class="tag-row">
+                        <span class="tag">{{ study.category }}</span>
+                        <span class="tag">👥 {{ study.member_count }}명 정원</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="subheading">신청자 관리 ({{ study.enrollments|length }})</h4>
+                    <div class="inline-actions">
+                        <a href="{{ url_for('study_detail', study_id=study.id) }}" class="secondary-link compact-link">상세 보기</a>
+                        <a href="{{ url_for('study_chat', study_id=study.id) }}" class="primary-link compact-link">채팅방</a>
+                    </div>
+
+                    {% if not study.enrollments %}
+                        <p class="text-muted">아직 신청자가 없습니다.</p>
+                    {% else %}
+                        {% for enroll in study.enrollments %}
+                            <div class="applicant-item">
+                                <div class="applicant-info">
+                                    <a href="{{ url_for('profile', nickname=enroll.user.nickname) }}">{{ enroll.user.nickname }}</a>
+                                    <div class="applicant-bio">{{ enroll.user.bio or "아직 소개글이 없습니다." }}</div>
+                                </div>
+
+                                <div class="applicant-actions">
+                                    {% if enroll.status == 0 %}
+                                        <form action="{{ url_for('enrollment_action', enrollment_id=enroll.id, action='accept') }}" method="POST" class="inline-form">
+                                            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+                                            <button type="submit" class="small-btn accept-btn">승인</button>
+                                        </form>
+                                        <form action="{{ url_for('enrollment_action', enrollment_id=enroll.id, action='reject') }}" method="POST" class="inline-form">
+                                            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+                                            <button type="submit" class="small-btn reject-btn">거절</button>
+                                        </form>
+                                    {% elif enroll.status == 1 %}
+                                        <span class="status-badge status-1">승인됨</span>
+                                    {% else %}
+                                        <span class="status-badge status-2">거절됨</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </article>
+        {% endfor %}
+
+        {% if not my_studies %}
+            <p class="empty-message">아직 만든 스터디가 없습니다.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div id="guest" class="tab-content">
+    <div class="study-list">
+        {% for enroll in my_enrollments %}
+            <article class="card">
+                <div class="card-top">
+                    <div class="card-row">
+                        <span class="tag">{{ enroll.study.category }}</span>
+                        {% if enroll.status == 0 %}
+                            <span class="status-badge status-0">대기중</span>
+                        {% elif enroll.status == 1 %}
+                            <span class="status-badge status-1">승인됨</span>
+                        {% else %}
+                            <span class="status-badge status-2">거절됨</span>
+                        {% endif %}
+                    </div>
+                    <h3><a href="{{ url_for('study_detail', study_id=enroll.study.id) }}">{{ enroll.study.title }}</a></h3>
+                    <p class="text-muted">방장: {{ enroll.study.writer }}</p>
+                </div>
+
+                <div class="card-row">
+                    {% if enroll.status == 1 %}
+                        <a href="{{ url_for('study_chat', study_id=enroll.study.id) }}" class="primary-link compact-link">채팅방 입장</a>
+                    {% endif %}
+                    {% if enroll.status == 1 and enroll.study.chat_link %}
+                        <a href="{{ enroll.study.chat_link }}" target="_blank" rel="noopener noreferrer" class="secondary-link compact-link">오픈채팅 입장</a>
+                    {% endif %}
+                </div>
+            </article>
+        {% endfor %}
+
+        {% if not my_enrollments %}
+            <p class="empty-message">아직 신청한 스터디가 없습니다.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function openTab(event, tabName) {
+        document.querySelectorAll('.tab-content').forEach((content) => {
+            content.classList.remove('active');
+        });
+
+        document.querySelectorAll('.tab-btn').forEach((button) => {
+            button.classList.remove('active');
+        });
+
+        document.getElementById(tabName).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    function toggleBioEdit() {
+        document.getElementById('bio-display').classList.toggle('hidden');
+        document.getElementById('bio-form').classList.toggle('hidden');
+    }
+</script>
+{% endblock %}

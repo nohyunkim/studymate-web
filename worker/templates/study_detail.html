@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}{{ study.title }} - 스터디 메이트{% endblock %}
+
+{% block content %}
+<section>
+    <div class="detail-header">
+        <div>
+            <span class="card-status {% if study.is_closed %}closed{% endif %}">
+                {% if study.is_closed %}모집 마감{% else %}모집 중{% endif %}
+            </span>
+            <h2>{{ study.title }}</h2>
+            <p class="detail-meta">
+                <span>👑 <a href="{{ url_for('profile', nickname=study.writer) }}" class="text-link-inline">{{ study.writer }}</a></span>
+                <span>📂 {{ study.category }}</span>
+                <span>👥 정원 {{ study.member_count }}명</span>
+                <span>✅ 승인 {{ approved_count }}명</span>
+            </p>
+        </div>
+    </div>
+
+    <article class="detail-body">
+        {{ study.content }}
+    </article>
+
+    {% if is_owner %}
+        <section class="owner-panel">
+            <h3>운영 도구</h3>
+            <div class="owner-grid">
+                <div>
+                    <p class="help-text">현재 상태를 직접 전환할 수 있습니다.</p>
+                    <form action="{{ url_for('study_toggle_close', study_id=study.id) }}" method="POST" class="inline-form">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+                        <button type="submit" class="secondary-btn">
+                            {% if study.is_closed %}모집 다시 열기{% else %}모집 마감하기{% endif %}
+                        </button>
+                    </form>
+                </div>
+
+                <div>
+                    <p class="help-text">승인된 참여자는 내부 채팅방에 입장할 수 있고, 필요하면 오픈채팅 링크도 함께 안내할 수 있습니다.</p>
+                    <div class="owner-chat-actions">
+                        <a href="{{ url_for('study_chat', study_id=study.id) }}" class="primary-link compact-link">스터디 채팅방</a>
+                    </div>
+                    {% if study.chat_link %}
+                        <a href="{{ study.chat_link }}" target="_blank" rel="noopener noreferrer" class="text-link-inline">{{ study.chat_link }}</a>
+                    {% else %}
+                        <p class="text-muted">등록된 링크가 없습니다.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="{{ url_for('study_edit', study_id=study.id) }}" class="btn-edit">수정</a>
+                <form action="{{ url_for('study_delete', study_id=study.id) }}" method="POST" class="inline-form">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+                    <button type="submit" class="btn-delete" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</button>
+                </form>
+            </div>
+        </section>
+    {% endif %}
+
+    <section class="cta-panel">
+        {% if not current_user %}
+            <a href="{{ url_for('login') }}" class="primary-link">로그인 후 신청하기</a>
+        {% elif is_owner %}
+            <p class="info-banner">내가 만든 스터디입니다.</p>
+        {% elif study.is_closed %}
+            <p class="info-banner muted-banner">모집이 마감되었습니다.</p>
+        {% elif enrollment is none %}
+            <form action="{{ url_for('study_apply', study_id=study.id) }}" method="POST" class="inline-form">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="primary-btn compact-btn">스터디 신청하기</button>
+            </form>
+        {% elif enrollment.status == 0 %}
+            <p class="info-banner warning-banner">승인 대기 중입니다.</p>
+        {% elif enrollment.status == 1 %}
+            <div class="approved-panel">
+                <h3>참여가 승인되었습니다</h3>
+                <a href="{{ url_for('study_chat', study_id=study.id) }}" class="primary-link compact-link">스터디 채팅방 입장</a>
+                {% if study.chat_link %}
+                    <p>아래 링크에서 오픈채팅에 참여해주세요.</p>
+                    <a href="{{ study.chat_link }}" target="_blank" rel="noopener noreferrer" class="primary-link">오픈채팅 입장</a>
+                {% else %}
+                    <p>오픈채팅 링크는 아직 없지만, 내부 채팅방에서 바로 대화를 시작할 수 있습니다.</p>
+                {% endif %}
+            </div>
+        {% elif enrollment.status == 2 %}
+            <p class="info-banner danger-banner">신청이 거절된 스터디입니다.</p>
+        {% endif %}
+    </section>
+</section>
+
+<section class="comment-section">
+    <div class="section-heading">
+        <h2>댓글 {{ study.comments|length }}</h2>
+    </div>
+
+    <div class="comment-list">
+        {% for comment in root_comments %}
+            <div class="comment-item">
+                <div class="comment-header">
+                    <strong>{{ comment.writer }}</strong>
+                    {% if comment.writer == study.writer %}
+                        <span class="writer-badge">글쓴이</span>
+                    {% endif %}
+                    <span class="date">{{ comment.date.strftime('%Y-%m-%d %H:%M') }}</span>
+
+                    <div class="comment-actions">
+                        {% if current_user %}
+                            <form action="{{ url_for('comment_like', comment_id=comment.id) }}" method="POST" class="inline-form">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+                                <button type="submit" class="comment-like-btn {% if current_user in comment.likers %}liked{% endif %}">
+                                    {% if current_user in comment.likers %}♥{% else %}♡{% endif %}
+                                    {{ comment.likers|length }}
+                                </button>
+                            </form>
+                        {% endif %}
+
+                        {% if current_user %}
+                            <button type="button" class="small-text-btn" onclick="toggleReplyForm('{{ comment.id }}')">답글</button>
+                        {% endif %}
+
+                        {% if current_user and (current_user.id == comment.author_id or current_user.nickname == comment.writer) %}
+                            <form action="{{ url_for('comment_delete', comment_id=comment.id) }}" method="POST" class="inline-form">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+                                <button type="submit" class="delete-text-btn" onclick="return confirm('댓글을 삭제할까요?')">삭제</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+                <p class="comment-content">{{ comment.content }}</p>
+
+                {% for reply in comment.replies %}
+                    <div class="reply-item">
+                        <span class="reply-icon">↳</span>
+                        <div class="reply-body">
+                            <div class="comment-header">
+                                <strong>{{ reply.writer }}</strong>
+                                {% if reply.writer == study.writer %}
+                                    <span class="writer-badge">글쓴이</span>
+                                {% endif %}
+                                <span class="date">{{ reply.date.strftime('%Y-%m-%d %H:%M') }}</span>
+
+                                <div class="comment-actions">
+                                    {% if current_user %}
+                                        <form action="{{ url_for('comment_like', comment_id=reply.id) }}" method="POST" class="inline-form">
+                                            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+                                            <button type="submit" class="comment-like-btn {% if current_user in reply.likers %}liked{% endif %}">
+                                                {% if current_user in reply.likers %}♥{% else %}♡{% endif %}
+                                                {{ reply.likers|length }}
+                                            </button>
+                                        </form>
+                                    {% endif %}
+
+                                    {% if current_user and (current_user.id == reply.author_id or current_user.nickname == reply.writer) %}
+                                        <form action="{{ url_for('comment_delete', comment_id=reply.id) }}" method="POST" class="inline-form">
+                                            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+                                            <button type="submit" class="delete-text-btn" onclick="return confirm('댓글을 삭제할까요?')">삭제</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <p class="comment-content">{{ reply.content }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                {% if current_user %}
+                    <div id="reply-form-{{ comment.id }}" class="reply-input-area hidden">
+                        <form action="{{ url_for('comment_write', study_id=study.id) }}" method="POST" class="reply-form">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+                            <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                            <input type="text" name="content" placeholder="답글을 입력하세요" required>
+                            <button type="submit" class="secondary-btn">등록</button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        {% if not root_comments %}
+            <p class="empty-message">첫 댓글을 남겨보세요.</p>
+        {% endif %}
+    </div>
+
+    {% if current_user %}
+        <form action="{{ url_for('comment_write', study_id=study.id) }}" method="POST" class="comment-form-box">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+            <input type="text" name="content" placeholder="댓글을 남겨보세요." required>
+            <button type="submit" class="send-btn" aria-label="댓글 등록">등록</button>
+        </form>
+    {% else %}
+        <div class="info-banner muted-banner">
+            <a href="{{ url_for('login') }}" class="text-link-inline">로그인</a> 후 댓글을 남길 수 있습니다.
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function toggleReplyForm(commentId) {
+        const form = document.getElementById('reply-form-' + commentId);
+        if (form) {
+            form.classList.toggle('hidden');
+        }
+    }
+</script>
+{% endblock %}

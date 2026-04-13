@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}StudyMate | 함께 완주하는 스터디 플랫폼{% endblock %}
+{% block body_class %}home-page{% endblock %}
+
+{% block content %}
+<section class="h-hero">
+    <div class="h-hero-text">
+        <span class="h-kicker">스터디메이트</span>
+        <h1>혼자 끊기던 공부,<br>팀과 함께 <em>완주</em>하세요.</h1>
+        <p class="h-lead">
+            스터디 탐색부터 모집·승인·채팅까지 한 흐름으로 이어지는
+            서비스형 스터디 플랫폼입니다.
+        </p>
+        <div class="h-hero-btns">
+            <a href="{{ url_for('study') }}" class="h-btn-primary">스터디 둘러보기</a>
+            {% if current_user %}
+                <a href="{{ url_for('studywrite') }}" class="h-btn-outline">내 스터디 모집하기</a>
+            {% else %}
+                <a href="{{ url_for('signup') }}" class="h-btn-outline">무료 회원가입</a>
+            {% endif %}
+        </div>
+        <div class="h-trust">
+            <span>검증된 카테고리</span>
+            <span>승인 기반 채팅</span>
+            <span>원클릭 합류</span>
+        </div>
+    </div>
+    <div class="h-hero-visual">
+        <img src="{{ url_for('static', filename='images/hero-study-scene.svg') }}" alt="스터디 일러스트" class="h-hero-img" width="960" height="760" />
+    </div>
+</section>
+
+<section class="h-stats">
+    <article class="h-stat-card h-stat-violet">
+        <strong>{{ random_studies|length }}+</strong>
+        <p>메인 노출 스터디</p>
+    </article>
+    <article class="h-stat-card h-stat-coral">
+        <strong>{{ study_categories|length }}</strong>
+        <p>카테고리 그룹</p>
+    </article>
+    <article class="h-stat-card h-stat-gold">
+        <strong>실시간</strong>
+        <p>팀 채팅 지원</p>
+    </article>
+</section>
+
+<section class="h-picks">
+    <div class="h-picks-header">
+        <div>
+            <span class="h-kicker">오늘의 추천</span>
+            <h2>지금 인기있는 스터디</h2>
+        </div>
+        <a href="{{ url_for('study') }}" class="h-btn-outline h-btn-sm">전체 보기 →</a>
+    </div>
+    <div class="h-picks-grid">
+        {% for study in random_studies[:4] %}
+            <a href="{{ url_for('study_detail', study_id=study.id) }}" class="h-pick-card">
+                <span class="h-pick-category">{{ study.category }}</span>
+                <strong>{{ study.title }}</strong>
+                <span class="h-pick-writer">by {{ study.writer }}</span>
+            </a>
+        {% else %}
+            <div class="h-pick-card h-pick-empty">
+                <span class="h-pick-category">READY</span>
+                <strong>첫 스터디를 등록해보세요</strong>
+                <span class="h-pick-writer">StudyMate</span>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="h-feature">
+    <div class="h-feature-img">
+        <img src="{{ url_for('static', filename='images/feature-recruit.svg') }}" alt="스터디 모집 일러스트" width="640" height="480" />
+    </div>
+    <div class="h-feature-text">
+        <span class="h-kicker">구조화된 모집</span>
+        <h2>정원, 카테고리, 내용을<br>한 페이지에 정리해요.</h2>
+        <p>흩어진 모집글 대신 정돈된 한 페이지로 팀원에게 전달하세요.
+           카테고리·정원·상세 내용이 깔끔하게 정리됩니다.</p>
+        <a href="{{ url_for('study') }}" class="h-btn-text">스터디 보러가기 →</a>
+    </div>
+</section>
+
+<section class="h-feature h-feature-reverse">
+    <div class="h-feature-img">
+        <img src="{{ url_for('static', filename='images/feature-flow.svg') }}" alt="승인 흐름 일러스트" width="840" height="560" />
+    </div>
+    <div class="h-feature-text">
+        <span class="h-kicker">상태 기반 승인</span>
+        <h2>대기 · 승인 · 거절,<br>한 화면에서 관리.</h2>
+        <p>신청자 상태를 명확히 구분하고, 승인 한 번이면 채팅방에
+           자동 합류됩니다. 운영 부담을 최소화했어요.</p>
+        <a href="{{ url_for('study') }}" class="h-btn-text">스터디 시작하기 →</a>
+    </div>
+</section>
+
+<section class="h-feature">
+    <div class="h-feature-img">
+        <img src="{{ url_for('static', filename='images/feature-chat-room.svg') }}" alt="채팅 일러스트" width="640" height="480" />
+    </div>
+    <div class="h-feature-text">
+        <span class="h-kicker">멤버 전용 채팅</span>
+        <h2>검증된 멤버끼리<br>집중해서 대화하세요.</h2>
+        <p>승인된 사람만 입장할 수 있는 실시간 채팅. 무분별한 참여 없이
+           진짜 팀원과만 소통할 수 있습니다.</p>
+        {% if current_user %}
+            <a href="{{ url_for('chats') }}" class="h-btn-text">내 채팅 보기 →</a>
+        {% else %}
+            <a href="{{ url_for('signup') }}" class="h-btn-text">가입하고 채팅 시작 →</a>
+        {% endif %}
+    </div>
+</section>
+
+<section class="h-categories">
+    <div class="h-categories-layout">
+        <div class="h-categories-content">
+            <span class="h-kicker">카테고리</span>
+            <h2>원하는 주제를 바로 탐색하세요</h2>
+            <p class="h-categories-copy">스터디 찾기와 같은 방식으로 원하는 주제를 바로 골라 들어갈 수 있습니다.</p>
+            <form action="{{ url_for('study') }}" method="GET" class="h-category-form">
+                <div class="input-group h-category-input-group">
+                    <label for="home-category-select">카테고리</label>
+                    <select id="home-category-select" name="category" class="h-category-select">
+                        <option value="">전체 카테고리</option>
+                        {% for group, options in study_categories %}
+                            <optgroup label="{{ group }}">
+                                {% for option in options %}
+                                    <option value="{{ option }}">{{ option }}</option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
+                    </select>
+                </div>
+                <noscript>
+                    <button type="submit" class="h-btn-primary h-category-submit">선택한 카테고리 보기</button>
+                </noscript>
+            </form>
+        </div>
+        <div class="h-categories-visual">
+            <img src="{{ url_for('static', filename='images/feature-category.svg') }}" alt="카테고리 일러스트" class="h-categories-illust" width="640" height="480" />
+        </div>
+    </div>
+</section>
+
+<section class="h-cta">
+    <div class="h-cta-content">
+        <img src="{{ url_for('static', filename='images/cta-community.svg') }}" alt="커뮤니티 일러스트" class="h-cta-img" width="480" height="400" />
+        <div class="h-cta-text">
+            <h2>스터디를 찾고, 팀을 만들고,<br>끝까지 완주하세요.</h2>
+            <div class="h-hero-btns">
+                <a href="{{ url_for('study') }}" class="h-btn-primary">스터디 둘러보기</a>
+                {% if current_user %}
+                    <a href="{{ url_for('mypage') }}" class="h-btn-outline h-btn-outline-light">내 활동 관리</a>
+                {% else %}
+                    <a href="{{ url_for('signup') }}" class="h-btn-outline h-btn-outline-light">지금 가입하기</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const homeCategorySelect = document.getElementById('home-category-select');
+
+    if (homeCategorySelect) {
+        homeCategorySelect.addEventListener('change', function () {
+            const nextUrl = this.value
+                ? `{{ url_for('study') }}?category=${encodeURIComponent(this.value)}`
+                : `{{ url_for('study') }}`;
+
+            window.location.href = nextUrl;
+        });
+    }
+</script>
+{% endblock %}
