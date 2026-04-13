@@ -1,0 +1,79 @@
+<svg width="480" height="400" viewBox="0 0 480 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="480" height="400" rx="32" fill="url(#ctaBg)"/>
+
+  <!-- connected nodes / community network -->
+  <!-- lines connecting people -->
+  <line x1="160" y1="160" x2="320" y2="120" stroke="#E0D0FF" stroke-width="3" stroke-dasharray="8 6"/>
+  <line x1="160" y1="160" x2="240" y2="280" stroke="#FFCBB8" stroke-width="3" stroke-dasharray="8 6"/>
+  <line x1="320" y1="120" x2="240" y2="280" stroke="#FFE4A0" stroke-width="3" stroke-dasharray="8 6"/>
+  <line x1="320" y1="120" x2="380" y2="260" stroke="#E0D0FF" stroke-width="3" stroke-dasharray="8 6"/>
+  <line x1="240" y1="280" x2="380" y2="260" stroke="#FFCBB8" stroke-width="3" stroke-dasharray="8 6"/>
+  <line x1="160" y1="160" x2="100" y2="260" stroke="#FFE4A0" stroke-width="3" stroke-dasharray="8 6"/>
+
+  <!-- person 1 top-left -->
+  <circle cx="160" cy="160" r="42" fill="#7C3AED"/>
+  <circle cx="160" cy="148" r="18" fill="#FFDDC1"/>
+  <circle cx="154" cy="146" r="3" fill="#2D2A4A"/>
+  <circle cx="166" cy="146" r="3" fill="#2D2A4A"/>
+  <path d="M154 155C157 159 163 159 166 155" stroke="#2D2A4A" stroke-width="2.5" stroke-linecap="round"/>
+  <rect x="144" y="164" width="32" height="24" rx="10" fill="#FFDDC1"/>
+
+  <!-- person 2 top-right -->
+  <circle cx="320" cy="120" r="42" fill="#FF7A5C"/>
+  <circle cx="320" cy="108" r="18" fill="#E8C4A0"/>
+  <circle cx="314" cy="106" r="3" fill="#2D2A4A"/>
+  <circle cx="326" cy="106" r="3" fill="#2D2A4A"/>
+  <path d="M314 116C317 120 323 120 326 116" stroke="#2D2A4A" stroke-width="2.5" stroke-linecap="round"/>
+  <rect x="304" y="124" width="32" height="24" rx="10" fill="#E8C4A0"/>
+
+  <!-- person 3 bottom-center -->
+  <circle cx="240" cy="280" r="42" fill="#FFD166"/>
+  <circle cx="240" cy="268" r="18" fill="#FFDDC1"/>
+  <circle cx="234" cy="266" r="3" fill="#2D2A4A"/>
+  <circle cx="246" cy="266" r="3" fill="#2D2A4A"/>
+  <path d="M234 276C237 280 243 280 246 276" stroke="#2D2A4A" stroke-width="2.5" stroke-linecap="round"/>
+  <rect x="224" y="284" width="32" height="24" rx="10" fill="#FFDDC1"/>
+
+  <!-- person 4 right -->
+  <circle cx="380" cy="260" r="36" fill="#6C63FF"/>
+  <circle cx="380" cy="250" r="16" fill="#FFDDC1"/>
+  <circle cx="375" cy="248" r="2.5" fill="#2D2A4A"/>
+  <circle cx="385" cy="248" r="2.5" fill="#2D2A4A"/>
+  <path d="M375 256C377 259 383 259 385 256" stroke="#2D2A4A" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- person 5 left -->
+  <circle cx="100" cy="260" r="34" fill="#10B981"/>
+  <circle cx="100" cy="250" r="15" fill="#E8C4A0"/>
+  <circle cx="95" cy="248" r="2.5" fill="#2D2A4A"/>
+  <circle cx="105" cy="248" r="2.5" fill="#2D2A4A"/>
+  <path d="M95 256C97 259 103 259 105 256" stroke="#2D2A4A" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- floating icons -->
+  <!-- book icon -->
+  <rect x="56" y="80" width="36" height="28" rx="4" fill="#6C63FF" opacity="0.6"/>
+  <rect x="72" y="80" width="2" height="28" fill="#4A42CC" opacity="0.6"/>
+  <rect x="62" y="86" width="14" height="4" rx="2" fill="#B8B3FF"/>
+  <rect x="62" y="94" width="10" height="4" rx="2" fill="#B8B3FF"/>
+
+  <!-- lightning bolt -->
+  <path d="M408 56L396 80H412L400 108" stroke="#FFD166" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- chat icon -->
+  <rect x="60" y="340" width="40" height="30" rx="14" fill="#FF7A5C" opacity="0.5"/>
+  <circle cx="72" cy="354" r="3" fill="#FFF" opacity="0.7"/>
+  <circle cx="82" cy="354" r="3" fill="#FFF" opacity="0.7"/>
+  <circle cx="92" cy="354" r="3" fill="#FFF" opacity="0.7"/>
+
+  <!-- sparkles -->
+  <circle cx="440" cy="340" r="8" fill="#FFD166" opacity="0.5"/>
+  <circle cx="420" cy="60" r="6" fill="#7C3AED" opacity="0.3"/>
+  <circle cx="60" cy="160" r="5" fill="#FF7A5C" opacity="0.3"/>
+
+  <defs>
+    <linearGradient id="ctaBg" x1="0" y1="0" x2="480" y2="400" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1E1B4B"/>
+      <stop offset="0.5" stop-color="#312E81"/>
+      <stop offset="1" stop-color="#3730A3"/>
+    </linearGradient>
+  </defs>
+</svg>

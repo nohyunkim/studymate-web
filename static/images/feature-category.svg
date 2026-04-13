@@ -1,0 +1,83 @@
+<svg width="640" height="480" viewBox="0 0 640 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="480" rx="32" fill="url(#catBg)"/>
+
+  <!-- browser window frame -->
+  <rect x="60" y="60" width="520" height="360" rx="24" fill="#FFFFFF"/>
+  <rect x="60" y="60" width="520" height="48" rx="24" fill="#F8F4F0"/>
+  <rect x="60" y="84" width="520" height="24" fill="#F8F4F0"/>
+  <!-- dots -->
+  <circle cx="88" cy="84" r="7" fill="#FF7A5C"/>
+  <circle cx="110" cy="84" r="7" fill="#FFD166"/>
+  <circle cx="132" cy="84" r="7" fill="#10B981"/>
+  <!-- url bar -->
+  <rect x="160" y="74" width="280" height="20" rx="10" fill="#EEEAE4"/>
+  <rect x="176" y="80" width="120" height="8" rx="4" fill="#C8C0B4"/>
+
+  <!-- search bar -->
+  <rect x="100" y="128" width="440" height="40" rx="20" fill="#FFF8F0"/>
+  <rect x="100" y="128" width="440" height="40" rx="20" stroke="#E8D5C4" stroke-width="2"/>
+  <circle cx="128" cy="148" r="10" fill="none" stroke="#A89888" stroke-width="3"/>
+  <line x1="136" y1="155" x2="142" y2="161" stroke="#A89888" stroke-width="3" stroke-linecap="round"/>
+  <rect x="152" y="142" width="100" height="10" rx="5" fill="#D4C4B4"/>
+
+  <!-- category cards grid -->
+  <!-- Card 1 - Programming -->
+  <rect x="100" y="188" width="134" height="100" rx="16" fill="#F0EAFF"/>
+  <rect x="116" y="204" width="40" height="40" rx="12" fill="#7C3AED"/>
+  <rect x="124" y="218" width="24" height="4" rx="2" fill="#E0D0FF"/>
+  <rect x="120" y="226" width="32" height="4" rx="2" fill="#E0D0FF"/>
+  <rect x="116" y="256" width="80" height="10" rx="5" fill="#7C3AED"/>
+  <rect x="116" y="272" width="56" height="6" rx="3" fill="#C4A8FF"/>
+
+  <!-- Card 2 - Language -->
+  <rect x="253" y="188" width="134" height="100" rx="16" fill="#FFF0E6"/>
+  <rect x="269" y="204" width="40" height="40" rx="12" fill="#FF7A5C"/>
+  <rect x="277" y="218" width="24" height="4" rx="2" fill="#FFCBB8"/>
+  <rect x="273" y="226" width="32" height="4" rx="2" fill="#FFCBB8"/>
+  <rect x="269" y="256" width="80" height="10" rx="5" fill="#FF7A5C"/>
+  <rect x="269" y="272" width="56" height="6" rx="3" fill="#FFBDA8"/>
+
+  <!-- Card 3 - Design -->
+  <rect x="406" y="188" width="134" height="100" rx="16" fill="#FFF6DD"/>
+  <rect x="422" y="204" width="40" height="40" rx="12" fill="#FFD166"/>
+  <rect x="430" y="218" width="24" height="4" rx="2" fill="#FFF0C0"/>
+  <rect x="426" y="226" width="32" height="4" rx="2" fill="#FFF0C0"/>
+  <rect x="422" y="256" width="80" height="10" rx="5" fill="#E6A800"/>
+  <rect x="422" y="272" width="56" height="6" rx="3" fill="#FFE488"/>
+
+  <!-- Card 4 - Exam -->
+  <rect x="100" y="306" width="134" height="100" rx="16" fill="#E6FFF0"/>
+  <rect x="116" y="322" width="40" height="40" rx="12" fill="#10B981"/>
+  <rect x="124" y="336" width="24" height="4" rx="2" fill="#A7F3D0"/>
+  <rect x="120" y="344" width="32" height="4" rx="2" fill="#A7F3D0"/>
+  <rect x="116" y="374" width="80" height="10" rx="5" fill="#10B981"/>
+  <rect x="116" y="390" width="56" height="6" rx="3" fill="#6EE7B7"/>
+
+  <!-- Card 5 - Data -->
+  <rect x="253" y="306" width="134" height="100" rx="16" fill="#F0EAFF"/>
+  <rect x="269" y="322" width="40" height="40" rx="12" fill="#6C63FF"/>
+  <rect x="277" y="336" width="24" height="4" rx="2" fill="#B8B3FF"/>
+  <rect x="273" y="344" width="32" height="4" rx="2" fill="#B8B3FF"/>
+  <rect x="269" y="374" width="80" height="10" rx="5" fill="#6C63FF"/>
+  <rect x="269" y="390" width="56" height="6" rx="3" fill="#9D96FF"/>
+
+  <!-- Card 6 - Certificate -->
+  <rect x="406" y="306" width="134" height="100" rx="16" fill="#FFF0E6"/>
+  <rect x="422" y="322" width="40" height="40" rx="12" fill="#F97316"/>
+  <rect x="430" y="336" width="24" height="4" rx="2" fill="#FFDDB8"/>
+  <rect x="426" y="344" width="32" height="4" rx="2" fill="#FFDDB8"/>
+  <rect x="422" y="374" width="80" height="10" rx="5" fill="#F97316"/>
+  <rect x="422" y="390" width="56" height="6" rx="3" fill="#FDBA74"/>
+
+  <!-- floating decorative -->
+  <circle cx="40" cy="40" r="16" fill="#FFD166" opacity="0.4"/>
+  <circle cx="600" cy="440" r="20" fill="#7C3AED" opacity="0.3"/>
+
+  <defs>
+    <linearGradient id="catBg" x1="0" y1="0" x2="640" y2="480" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFAF2"/>
+      <stop offset="0.5" stop-color="#FFF5EA"/>
+      <stop offset="1" stop-color="#F5F0FF"/>
+    </linearGradient>
+  </defs>
+</svg>

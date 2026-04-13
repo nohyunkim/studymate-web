@@ -1,0 +1,92 @@
+<svg width="640" height="480" viewBox="0 0 640 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- warm background -->
+  <rect width="640" height="480" rx="32" fill="url(#recruitBg)"/>
+
+  <!-- desk / table -->
+  <rect x="80" y="320" width="480" height="28" rx="14" fill="#E8D5C4"/>
+  <rect x="60" y="340" width="520" height="100" rx="22" fill="#F3E4D7"/>
+
+  <!-- laptop left -->
+  <rect x="120" y="240" width="140" height="90" rx="12" fill="#2D2A4A"/>
+  <rect x="130" y="250" width="120" height="64" rx="6" fill="#6C63FF"/>
+  <rect x="100" y="328" width="180" height="10" rx="5" fill="#2D2A4A"/>
+  <!-- screen content -->
+  <rect x="140" y="262" width="60" height="8" rx="4" fill="#B8B3FF"/>
+  <rect x="140" y="278" width="80" height="6" rx="3" fill="#9D96FF"/>
+  <rect x="140" y="292" width="50" height="6" rx="3" fill="#9D96FF"/>
+
+  <!-- laptop right -->
+  <rect x="380" y="248" width="130" height="82" rx="12" fill="#2D2A4A"/>
+  <rect x="390" y="258" width="110" height="58" rx="6" fill="#FF7A5C"/>
+  <rect x="365" y="328" width="160" height="10" rx="5" fill="#2D2A4A"/>
+  <!-- screen content -->
+  <rect x="400" y="270" width="50" height="8" rx="4" fill="#FFCBB8"/>
+  <rect x="400" y="284" width="72" height="6" rx="3" fill="#FFBDA8"/>
+  <rect x="400" y="296" width="40" height="6" rx="3" fill="#FFBDA8"/>
+
+  <!-- person left (warm skin) -->
+  <circle cx="190" cy="148" r="40" fill="#FFDDC1"/>
+  <circle cx="176" cy="144" r="5" fill="#2D2A4A"/>
+  <circle cx="204" cy="144" r="5" fill="#2D2A4A"/>
+  <path d="M178 164C184 172 196 172 202 164" stroke="#2D2A4A" stroke-width="4" stroke-linecap="round"/>
+  <!-- hair -->
+  <path d="M150 138C150 108 175 88 210 92C228 94 232 116 230 132" stroke="#2D2A4A" stroke-width="20" stroke-linecap="round" fill="none"/>
+  <!-- body -->
+  <rect x="160" y="186" width="60" height="80" rx="22" fill="#6C63FF"/>
+  <rect x="145" y="196" width="30" height="70" rx="14" fill="#FFDDC1"/> <!-- left arm -->
+  <rect x="215" y="196" width="30" height="70" rx="14" fill="#FFDDC1"/> <!-- right arm -->
+
+  <!-- person middle (darker) -->
+  <circle cx="320" cy="130" r="44" fill="#E8C4A0"/>
+  <circle cx="304" cy="126" r="5" fill="#2D2A4A"/>
+  <circle cx="336" cy="126" r="5" fill="#2D2A4A"/>
+  <path d="M306 148C314 158 326 158 334 148" stroke="#2D2A4A" stroke-width="4" stroke-linecap="round"/>
+  <!-- hair -->
+  <rect x="280" y="86" width="80" height="46" rx="20" fill="#3D2A1A"/>
+  <!-- body -->
+  <rect x="288" y="172" width="64" height="86" rx="24" fill="#FFD166"/>
+  <rect x="270" y="184" width="32" height="74" rx="16" fill="#E8C4A0"/>
+  <rect x="340" y="184" width="32" height="74" rx="16" fill="#E8C4A0"/>
+
+  <!-- person right -->
+  <circle cx="450" cy="155" r="38" fill="#FFDDC1"/>
+  <circle cx="438" cy="150" r="5" fill="#2D2A4A"/>
+  <circle cx="462" cy="150" r="5" fill="#2D2A4A"/>
+  <path d="M438 170C444 178 456 178 462 170" stroke="#2D2A4A" stroke-width="4" stroke-linecap="round"/>
+  <!-- hair -->
+  <path d="M412 146C412 114 428 100 450 100C472 100 488 114 488 146" stroke="#FF7A5C" stroke-width="16" stroke-linecap="round" fill="none"/>
+  <!-- body -->
+  <rect x="422" y="192" width="56" height="76" rx="22" fill="#7C3AED"/>
+  <rect x="408" y="202" width="28" height="68" rx="14" fill="#FFDDC1"/>
+  <rect x="474" y="202" width="28" height="68" rx="14" fill="#FFDDC1"/>
+
+  <!-- floating elements -->
+  <circle cx="90" cy="80" r="18" fill="#FFD166" opacity="0.6"/>
+  <circle cx="540" cy="60" r="24" fill="#FF7A5C" opacity="0.4"/>
+  <circle cx="560" cy="200" r="14" fill="#6C63FF" opacity="0.3"/>
+
+  <!-- coffee cup -->
+  <rect x="290" y="298" width="32" height="28" rx="6" fill="#FFFFFF"/>
+  <rect x="318" y="304" width="14" height="16" rx="7" fill="none" stroke="#FFFFFF" stroke-width="4"/>
+  <ellipse cx="306" cy="296" rx="18" ry="4" fill="#D4A574"/>
+
+  <!-- book -->
+  <rect x="490" y="296" width="44" height="32" rx="4" fill="#6C63FF"/>
+  <rect x="510" y="296" width="2" height="32" fill="#4A42CC"/>
+
+  <!-- plus icon floating (join team) -->
+  <circle cx="80" cy="200" r="22" fill="#10B981"/>
+  <path d="M72 200H88" stroke="white" stroke-width="5" stroke-linecap="round"/>
+  <path d="M80 192V208" stroke="white" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- heart icon -->
+  <path d="M552 130C552 122 560 116 568 120C576 116 584 122 584 130C584 142 568 152 568 152C568 152 552 142 552 130Z" fill="#FF7A5C" opacity="0.7"/>
+
+  <defs>
+    <linearGradient id="recruitBg" x1="0" y1="0" x2="640" y2="480" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF8F0"/>
+      <stop offset="0.5" stop-color="#FFF1E6"/>
+      <stop offset="1" stop-color="#F0EAFF"/>
+    </linearGradient>
+  </defs>
+</svg>

@@ -2,6 +2,12 @@
     .portfolio-hero,
     .editorial-band,
     .showcase-gallery,
+    .h-hero,
+    .h-stats,
+    .h-feature,
+    .h-feature-reverse,
+    .h-categories-top,
+    .h-cta-content,
     .landing-hero,
     .landing-features,
     .home-strip,
@@ -38,6 +44,36 @@
     .dashboard-side,
     .dashboard-step-list {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .h-feature-reverse {
+        direction: ltr;
+    }
+
+    .h-picks-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .h-cta-img {
+        width: 200px;
+        justify-self: center;
+    }
+
+    .h-categories-illust {
+        max-width: 240px;
+        justify-self: center;
+    }
+
+    .h-cta-content {
+        text-align: center;
+    }
+
+    .h-cta-text {
+        align-items: center;
+    }
+
+    .h-hero-btns {
+        justify-content: center;
     }
 
     .dashboard-image-panel {
@@ -78,6 +114,37 @@
     .showcase-gallery {
         grid-template-columns: 1fr;
         gap: 24px;
+    }
+
+    .saas-hero-copy,
+    .saas-hero-panel,
+    .saas-proof-band article,
+    .saas-feature-main,
+    .saas-feature-card,
+    .saas-categories,
+    .saas-final-cta,
+    .h-picks,
+    .h-categories,
+    .h-stat-card,
+    .h-feature-text,
+    .h-cta-content {
+        padding: 20px;
+    }
+
+    .h-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .h-picks-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .h-hero-text h1 {
+        font-size: clamp(1.8rem, 8vw, 2.6rem);
+    }
+
+    .h-cta-img {
+        width: 160px;
     }
 
     .gallery-overlay {
