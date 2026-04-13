@@ -126,14 +126,23 @@
         <div>
             <span class="h-kicker">카테고리</span>
             <h2>원하는 주제를 바로 탐색하세요</h2>
+            <p class="h-categories-copy">스터디 찾기에서 보던 전체 카테고리 구조를 그대로 가져왔습니다. 관심 있는 그룹만 펼쳐서 빠르게 들어갈 수 있습니다.</p>
         </div>
         <img src="{{ url_for('static', filename='images/feature-category.svg') }}" alt="카테고리 일러스트" class="h-categories-illust" width="640" height="480"/>
     </div>
-    <div class="h-chip-grid">
-        {% for group, options in study_categories[:5] %}
-            {% for option in options[:3] %}
-                <a href="{{ url_for('study', category=option) }}" class="h-chip">{{ option }}</a>
-            {% endfor %}
+    <div class="h-category-accordion" aria-label="스터디 카테고리 목록">
+        {% for group, options in study_categories %}
+            <details class="h-category-group" {% if loop.first %}open{% endif %}>
+                <summary>
+                    <span>{{ group }}</span>
+                    <strong>{{ options|length }}개</strong>
+                </summary>
+                <div class="h-category-links">
+                    {% for option in options %}
+                        <a href="{{ url_for('study', category=option) }}" class="h-category-link">{{ option }}</a>
+                    {% endfor %}
+                </div>
+            </details>
         {% endfor %}
     </div>
 </section>
@@ -143,7 +152,6 @@
     <div class="h-cta-content">
         <img src="{{ url_for('static', filename='images/cta-community.svg') }}" alt="커뮤니티 일러스트" class="h-cta-img" width="480" height="400"/>
         <div class="h-cta-text">
-            <span class="h-kicker h-kicker-light">지금 시작하세요</span>
             <h2>스터디를 찾고, 팀을 만들고,<br>끝까지 완주하세요.</h2>
             <div class="h-hero-btns">
                 <a href="{{ url_for('study') }}" class="h-btn-primary">스터디 둘러보기</a>

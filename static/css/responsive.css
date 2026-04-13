@@ -54,6 +54,10 @@
         grid-template-columns: repeat(2, 1fr);
     }
 
+    .h-category-links {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .h-cta-img {
         width: 200px;
         justify-self: center;
@@ -137,6 +141,15 @@
 
     .h-picks-grid {
         grid-template-columns: 1fr;
+    }
+
+    .h-category-group summary {
+        padding: 16px 18px;
+    }
+
+    .h-category-links {
+        grid-template-columns: 1fr;
+        padding: 0 18px 18px;
     }
 
     .h-hero-text h1 {

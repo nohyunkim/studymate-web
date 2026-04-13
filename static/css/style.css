@@ -246,7 +246,9 @@ h2 {
 
 body.home-page {
     background:
-        linear-gradient(180deg, #f8f5ef 0%, #f3f0e8 100%);
+        radial-gradient(circle at top left, rgba(99, 102, 241, 0.18), transparent 24%),
+        radial-gradient(circle at top right, rgba(34, 211, 238, 0.16), transparent 20%),
+        linear-gradient(180deg, #f7faff 0%, #eef4ff 52%, #f4f8ff 100%);
 }
 
 .home-page main {
