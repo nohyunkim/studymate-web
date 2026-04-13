@@ -608,7 +608,7 @@
     color: #4F46E5;
     font-weight: 700;
     font-size: 0.92rem;
-    transition: gap 0.2s;
+    transition: gap 0.2s, color 0.2s;
 }
 
 .h-btn-text:hover {
@@ -855,7 +855,20 @@
     grid-template-columns: 1fr 1fr;
     gap: 40px;
     align-items: center;
-    padding: 14px 0;
+    padding: 30px;
+    border-radius: 32px;
+    border: 1px solid rgba(199, 210, 254, 0.82);
+    background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.84), transparent 26%),
+        linear-gradient(180deg, rgba(248, 250, 255, 0.96) 0%, rgba(239, 246, 255, 0.92) 100%);
+    box-shadow: 0 22px 46px rgba(30, 41, 59, 0.06);
+    transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+}
+
+.h-feature:hover {
+    transform: translateY(-6px);
+    border-color: rgba(129, 140, 248, 0.94);
+    box-shadow: 0 30px 58px rgba(79, 70, 229, 0.12);
 }
 
 .h-feature-reverse {
@@ -872,6 +885,7 @@
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(239, 246, 255, 0.88) 100%);
     border: 1px solid rgba(226, 232, 240, 0.9);
     box-shadow: 0 22px 42px rgba(15, 23, 42, 0.06);
+    transition: transform 0.24s ease, box-shadow 0.24s ease;
 }
 
 .h-feature-img img {
@@ -879,6 +893,16 @@
     width: 100%;
     height: auto;
     border-radius: 28px;
+    transition: transform 0.3s ease;
+}
+
+.h-feature:hover .h-feature-img {
+    transform: translateY(-2px);
+    box-shadow: 0 26px 52px rgba(59, 130, 246, 0.12);
+}
+
+.h-feature:hover .h-feature-img img {
+    transform: scale(1.015);
 }
 
 .h-feature-text {
@@ -900,6 +924,10 @@
     font-size: 1.02rem;
     line-height: 1.75;
     margin-bottom: 0;
+}
+
+.h-feature:hover .h-btn-text {
+    color: #4338CA;
 }
 
 /* ══════════════════════════════════════
