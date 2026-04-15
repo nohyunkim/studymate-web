@@ -8,4 +8,5 @@ __pycache__/
 .wrangler/
 .npm-cache/
 .uv-cache/
+instance/database.db
 instance/test_*.db
