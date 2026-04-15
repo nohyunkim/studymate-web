@@ -6,3 +6,5 @@ python_modules/
 __pycache__/
 *.pyc
 .wrangler/
+.npm-cache/
+.uv-cache/
