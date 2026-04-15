@@ -10,7 +10,6 @@ from types import SimpleNamespace
 from urllib.parse import parse_qs, quote, urlencode, urlparse
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from js import Request as JsRequest
 from js import URL
 from markupsafe import Markup
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -1385,7 +1384,7 @@ HANDLERS = {
 async def serve_static(env, request, path):
     target = URL.new(request.url)
     target.pathname = path[len("/static") :] or "/"
-    return await env.ASSETS.fetch(JsRequest.new(target.toString(), request))
+    return await env.ASSETS.fetch(target.toString())
 
 
 def match_route(path, method):
