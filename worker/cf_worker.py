@@ -15,6 +15,26 @@ from markupsafe import Markup
 from werkzeug.security import check_password_hash, generate_password_hash
 from workers import Response, WorkerEntrypoint
 
+SITE_TAGLINE = "스터디를 시작하고, 운영하고, 끝까지 이어가게 돕는 플랫폼"
+DEFAULT_META_DESCRIPTION = (
+    "StudyMate는 스터디 모집, 신청 승인, 멤버 전용 채팅을 한 번에 운영할 수 있는 학습 커뮤니티 플랫폼입니다."
+)
+
+SITE_NAME = "StudyMate"
+SITE_TAGLINE = "스터디 모집, 승인 관리, 멤버 전용 채팅까지 한 곳에서 운영하는 학습 커뮤니티"
+DEFAULT_META_DESCRIPTION = (
+    "StudyMate는 스터디 모집, 신청 승인, 멤버 전용 채팅을 한 번에 관리할 수 있는 학습 커뮤니티 플랫폼입니다."
+)
+SITE_TAGLINE = "스터디를 시작하고, 운영하고, 끝까지 이어가게 돕는 플랫폼"
+DEFAULT_META_DESCRIPTION = (
+    "StudyMate는 스터디 모집, 신청 승인, 멤버 전용 채팅을 한 번에 운영할 수 있는 학습 커뮤니티 플랫폼입니다."
+)
+SITE_NAME = "StudyMate"
+SITE_TAGLINE = "스터디를 시작하고, 운영하고, 끝까지 이어가게 돕는 플랫폼"
+DEFAULT_META_DESCRIPTION = (
+    "StudyMate는 스터디 모집, 신청 승인, 멤버 전용 채팅을 한 번에 운영할 수 있는 학습 커뮤니티 플랫폼입니다."
+)
+
 STUDY_CATEGORIES = [
     ("취업 / 커리어", ["취업 준비", "자소서 / 포트폴리오", "면접 준비", "공기업 / 공시"]),
     (
@@ -67,11 +87,41 @@ HOME_SHOWCASE_VISUALS = [
 
 SESSION_COOKIE_NAME = "studymate_session"
 DEFAULT_SECRET = "dev-secret-change-me"
-TEMPLATES_DIR = Path(__file__).parent / "templates"
+TEMPLATES_DIR = Path(__file__).resolve().parents[1] / "templates"
+
+
+def resolve_contact_email(env):
+    email = getattr(env, "STUDYMATE_CONTACT_EMAIL", "")
+    return email or "contact@studymate.local"
+
+
+def allow_insecure_dev_secret(env):
+    return getattr(env, "STUDYMATE_ALLOW_INSECURE_DEV_SECRET", "") == "1"
+
+
+def resolve_secret(env):
+    secret = getattr(env, "SECRET_KEY", "")
+    if secret:
+        return secret
+
+    if allow_insecure_dev_secret(env):
+        return DEFAULT_SECRET
+
+    raise RuntimeError(
+        "SECRET_KEY is required. Set SECRET_KEY for every environment. "
+        "Use STUDYMATE_ALLOW_INSECURE_DEV_SECRET=1 only for local development."
+    )
 
 ROUTE_PATTERNS = [
     ("home", ["GET"], re.compile(r"^/$")),
     ("index", ["GET"], re.compile(r"^/index\.html$")),
+    ("robots", ["GET"], re.compile(r"^/robots\.txt$")),
+    ("about", ["GET"], re.compile(r"^/about$")),
+    ("guide", ["GET"], re.compile(r"^/guide$")),
+    ("faq", ["GET"], re.compile(r"^/faq$")),
+    ("privacy", ["GET"], re.compile(r"^/privacy$")),
+    ("terms", ["GET"], re.compile(r"^/terms$")),
+    ("contact", ["GET"], re.compile(r"^/contact$")),
     ("login", ["GET", "POST"], re.compile(r"^/login$")),
     ("logout", ["POST"], re.compile(r"^/logout$")),
     ("check_userid", ["GET"], re.compile(r"^/check-userid$")),
@@ -99,6 +149,13 @@ ROUTE_PATTERNS = [
 URL_RULES = {
     "home": "/",
     "index": "/index.html",
+    "robots": "/robots.txt",
+    "about": "/about",
+    "guide": "/guide",
+    "faq": "/faq",
+    "privacy": "/privacy",
+    "terms": "/terms",
+    "contact": "/contact",
     "login": "/login",
     "logout": "/logout",
     "check_userid": "/check-userid",
@@ -627,7 +684,7 @@ class RequestContext:
         self.route_params = route_params
         self.url = urlparse(request.url)
         self.query = {key: values[0] for key, values in parse_qs(self.url.query).items()}
-        self.secret = env.SECRET_KEY if hasattr(env, "SECRET_KEY") and env.SECRET_KEY else DEFAULT_SECRET
+        self.secret = resolve_secret(env)
         cookies = parse_cookie_header(request.headers.get("Cookie"))
         self.session = unsign_session(cookies.get(SESSION_COOKIE_NAME), self.secret)
         if not isinstance(self.session, dict):
@@ -697,6 +754,10 @@ class RequestContext:
             csrf_token=self.get_csrf_token(),
             study_categories=STUDY_CATEGORIES,
             showcase_visuals=HOME_SHOWCASE_VISUALS,
+            site_name=SITE_NAME,
+            site_tagline=SITE_TAGLINE,
+            default_meta_description=DEFAULT_META_DESCRIPTION,
+            contact_email=resolve_contact_email(self.env),
             get_flashed_messages=self.get_flashed_messages,
             **context,
         )
@@ -746,6 +807,34 @@ async def handle_home(ctx):
 
 async def handle_index(ctx):
     return ctx.redirect(url_for("home"))
+
+
+async def handle_robots(ctx):
+    return ctx.text("User-agent: *\nAllow: /\n")
+
+
+async def handle_about(ctx):
+    return ctx.render("about.html")
+
+
+async def handle_guide(ctx):
+    return ctx.render("guide.html")
+
+
+async def handle_faq(ctx):
+    return ctx.render("faq.html")
+
+
+async def handle_privacy(ctx):
+    return ctx.render("privacy.html")
+
+
+async def handle_terms(ctx):
+    return ctx.render("terms.html")
+
+
+async def handle_contact(ctx):
+    return ctx.render("contact.html")
 
 
 async def handle_login(ctx):
@@ -1356,6 +1445,13 @@ async def handle_study_toggle_close(ctx):
 HANDLERS = {
     "home": handle_home,
     "index": handle_index,
+    "robots": handle_robots,
+    "about": handle_about,
+    "guide": handle_guide,
+    "faq": handle_faq,
+    "privacy": handle_privacy,
+    "terms": handle_terms,
+    "contact": handle_contact,
     "login": handle_login,
     "logout": handle_logout,
     "check_userid": handle_check_userid,

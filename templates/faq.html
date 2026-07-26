@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}자주 묻는 질문 - {{ site_name }}{% endblock %}
+{% block meta_description %}회원가입, 모집글 작성, 신청 승인, 채팅 이용 등 자주 묻는 질문을 정리했습니다.{% endblock %}
+
+{% block content %}
+<section class="info-hero">
+    <span class="section-kicker">FAQ</span>
+    <h1>자주 묻는 질문</h1>
+    <p class="info-lead">
+        서비스 이용 중 자주 나오는 질문을 먼저 정리했습니다. 여기에 없는 문의는 연락 페이지를 통해 접수할 수 있습니다.
+    </p>
+</section>
+
+<section class="policy-stack">
+    <article class="info-card">
+        <h2>스터디 등록은 누구나 할 수 있나요?</h2>
+        <p>회원가입 후 로그인한 사용자라면 누구나 스터디 모집글을 작성할 수 있습니다.</p>
+    </article>
+    <article class="info-card">
+        <h2>신청자는 바로 채팅에 들어갈 수 있나요?</h2>
+        <p>아닙니다. 개설자가 승인한 멤버만 스터디 채팅방에 접근할 수 있습니다.</p>
+    </article>
+    <article class="info-card">
+        <h2>외부 오픈채팅 링크는 누구에게 보이나요?</h2>
+        <p>개설자와 승인된 참여자에게만 보이도록 구성되어 있습니다.</p>
+    </article>
+    <article class="info-card">
+        <h2>모집 인원을 바꾸면 상태도 바뀌나요?</h2>
+        <p>정원 변경에 따라 모집 상태가 다시 계산됩니다. 인원을 늘리면 닫힌 스터디가 다시 열릴 수 있습니다.</p>
+    </article>
+    <article class="info-card">
+        <h2>오류나 정책 문의는 어디로 보내면 되나요?</h2>
+        <p><a href="{{ url_for('contact') }}" class="text-link-inline">문의 / 오류 제보</a> 페이지의 연락처를 이용해 주세요.</p>
+    </article>
+</section>
+{% endblock %}

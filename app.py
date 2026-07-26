@@ -25,6 +25,44 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from models import ChatMessage, Comment, Enrollment, Study, User, db
 
+SITE_NAME = "StudyMate"
+SITE_TAGLINE = "스터디 모집, 승인 관리, 멤버 전용 채팅까지 한 곳에서 운영하는 학습 커뮤니티"
+DEFAULT_META_DESCRIPTION = (
+    "StudyMate는 스터디 모집, 신청 승인, 멤버 전용 채팅을 한 번에 관리할 수 있는 학습 커뮤니티 플랫폼입니다."
+)
+CONTACT_EMAIL = os.environ.get("STUDYMATE_CONTACT_EMAIL", "contact@studymate.local")
+SITE_TAGLINE = "스터디를 시작하고, 운영하고, 끝까지 이어가게 돕는 플랫폼"
+DEFAULT_META_DESCRIPTION = (
+    "StudyMate는 스터디 모집, 신청 승인, 멤버 전용 채팅을 한 번에 운영할 수 있는 학습 커뮤니티 플랫폼입니다."
+)
+
+def load_local_env():
+    env_path = os.path.join(os.path.dirname(__file__), ".env")
+    if not os.path.exists(env_path):
+        return
+
+    with open(env_path, encoding="utf-8") as env_file:
+        for raw_line in env_file:
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+
+            key, value = line.split("=", 1)
+            key = key.strip()
+            value = value.strip()
+            if value[:1] == value[-1:] and value[:1] in {'"', "'"}:
+                value = value[1:-1]
+            os.environ.setdefault(key, value)
+
+
+load_local_env()
+SITE_NAME = "StudyMate"
+SITE_TAGLINE = "스터디를 시작하고, 운영하고, 끝까지 이어가게 돕는 플랫폼"
+DEFAULT_META_DESCRIPTION = (
+    "StudyMate는 스터디 모집, 신청 승인, 멤버 전용 채팅을 한 번에 운영할 수 있는 학습 커뮤니티 플랫폼입니다."
+)
+CONTACT_EMAIL = os.environ.get("STUDYMATE_CONTACT_EMAIL", "contact@studymate.local")
+
 STUDY_CATEGORIES = [
     ("취업 / 커리어", ["취업 준비", "자소서 / 포트폴리오", "면접 준비", "공기업 / 공시"]),
     (
@@ -80,15 +118,37 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 INSTANCE_DIR = os.path.join(BASE_DIR, "instance")
 os.makedirs(INSTANCE_DIR, exist_ok=True)
 
+
+def allow_insecure_dev_secret():
+    return os.environ.get("STUDYMATE_ALLOW_INSECURE_DEV_SECRET") == "1"
+
+
+def get_runtime_secret():
+    secret = os.environ.get("SECRET_KEY")
+    if secret:
+        return secret
+
+    if allow_insecure_dev_secret():
+        return "dev-secret-change-me"
+
+    raise RuntimeError(
+        "SECRET_KEY is required. Set SECRET_KEY for every environment. "
+        "Use STUDYMATE_ALLOW_INSECURE_DEV_SECRET=1 only for local development."
+    )
+
+
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-change-me")
+app.config["SECRET_KEY"] = get_runtime_secret()
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
     "STUDYMATE_DB_URI",
     "sqlite:///" + os.path.join(INSTANCE_DIR, "database.db"),
 )
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = os.environ.get("STUDYMATE_SECURE_COOKIE") == "1"
+app.config["SESSION_COOKIE_NAME"] = "studymate_session"
 
 db.init_app(app)
 chat_subscribers = defaultdict(list)
@@ -200,8 +260,7 @@ def approved_member_count(study):
 
 
 def sync_closed_state(study):
-    if approved_member_count(study) >= study.member_count:
-        study.is_closed = True
+    study.is_closed = approved_member_count(study) >= study.member_count
 
 
 def serialize_chat_message(message):
@@ -386,12 +445,21 @@ def inject_template_globals():
         "current_user": user,
         "user_nickname": user.nickname if user else None,
         "study_categories": STUDY_CATEGORIES,
+        "site_name": SITE_NAME,
+        "site_tagline": SITE_TAGLINE,
+        "default_meta_description": DEFAULT_META_DESCRIPTION,
+        "contact_email": CONTACT_EMAIL,
     }
 
 
 @app.route("/favicon.ico")
 def favicon():
     return "", 204
+
+
+@app.route("/robots.txt")
+def robots():
+    return Response("User-agent: *\nAllow: /\n", mimetype="text/plain")
 
 
 @app.route("/")
@@ -407,6 +475,36 @@ def home():
 @app.route("/index.html")
 def index():
     return redirect(url_for("home"))
+
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+
+@app.route("/guide")
+def guide():
+    return render_template("guide.html")
+
+
+@app.route("/faq")
+def faq():
+    return render_template("faq.html")
+
+
+@app.route("/privacy")
+def privacy():
+    return render_template("privacy.html")
+
+
+@app.route("/terms")
+def terms():
+    return render_template("terms.html")
+
+
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
 
 
 @app.route("/login", methods=["GET", "POST"])

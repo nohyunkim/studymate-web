@@ -2,6 +2,7 @@
     .portfolio-hero,
     .editorial-band,
     .showcase-gallery,
+    .info-grid,
     .h-hero,
     .h-stats,
     .h-feature,
@@ -86,6 +87,14 @@
     .owner-grid {
         flex-direction: column;
     }
+
+    .footer-inner {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-nav-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 720px) {
@@ -117,6 +126,10 @@
     .showcase-gallery {
         grid-template-columns: 1fr;
         gap: 24px;
+    }
+
+    .footer-nav-grid {
+        grid-template-columns: 1fr;
     }
 
     .saas-hero-copy,
@@ -172,6 +185,8 @@
     .hero-copy,
     .hero-panel,
     .filter-panel,
+    .info-hero,
+    .info-card,
     .profile-section,
     .profile-header,
     .detail-header,

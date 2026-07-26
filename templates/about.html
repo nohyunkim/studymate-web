@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}서비스 소개 - {{ site_name }}{% endblock %}
+{% block meta_description %}{{ site_name }}가 어떤 문제를 해결하는지, 누구를 위한 서비스인지, 어떤 흐름으로 운영되는지 안내합니다.{% endblock %}
+
+{% block content %}
+<section class="info-hero">
+    <span class="section-kicker">ABOUT</span>
+    <h1>스터디를 시작하기는 쉬워도, 끝까지 운영하기는 어렵습니다.</h1>
+    <p class="info-lead">
+        {{ site_name }}는 모집글 작성, 참여 신청, 승인 관리, 멤버 전용 채팅까지 이어지는 흐름을
+        한 곳에서 정리해 스터디 운영 부담을 줄이기 위해 만든 웹 서비스입니다.
+    </p>
+</section>
+
+<section class="info-grid">
+    <article class="info-card">
+        <h2>누구를 위한 서비스인가요?</h2>
+        <p>취업 준비, 자격증, 어학, 개발, 루틴 관리처럼 반복 학습이 필요한 개인과 소규모 팀을 위한 서비스입니다.</p>
+    </article>
+    <article class="info-card">
+        <h2>무엇이 편해지나요?</h2>
+        <p>신청 상태와 승인 결과가 명확해지고, 승인된 멤버만 채팅에 접근하게 해 운영 혼선을 줄일 수 있습니다.</p>
+    </article>
+    <article class="info-card">
+        <h2>서비스 운영 원칙</h2>
+        <p>필요한 정보만 수집하고, 공개 정책 문서와 문의 경로를 제공해 신뢰할 수 있는 웹 서비스 구조를 지향합니다.</p>
+    </article>
+    <article class="info-card">
+        <h2>앞으로의 방향</h2>
+        <p>스터디 운영에 필요한 기본 기능을 더 단단하게 만들고, 접근성·보안·정책 고지를 계속 보강해 나갈 예정입니다.</p>
+    </article>
+</section>
+{% endblock %}
